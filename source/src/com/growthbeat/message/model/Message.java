@@ -1,10 +1,13 @@
 package com.growthbeat.message.model;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
@@ -21,6 +24,20 @@ public class Message extends Model {
 
 	private Message(JSONObject jsonObject) {
 		setJsonObject(jsonObject);
+	}
+
+	public static Message find(String clientId, String credentialId) {
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		if (clientId != null)
+			params.put("clientId", clientId);
+		if (credentialId != null)
+			params.put("credentialId", credentialId);
+
+		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().get("1/messages", params);
+
+		return new Message(jsonObject);
+
 	}
 
 	public String getId() {

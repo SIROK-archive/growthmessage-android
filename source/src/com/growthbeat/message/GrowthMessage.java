@@ -4,9 +4,11 @@ import android.content.Context;
 
 import com.growthbeat.CatchableThread;
 import com.growthbeat.GrowthbeatCore;
+import com.growthbeat.GrowthbeatException;
 import com.growthbeat.Logger;
 import com.growthbeat.Preference;
 import com.growthbeat.http.GrowthbeatHttpClient;
+import com.growthbeat.message.model.Message;
 
 public class GrowthMessage {
 
@@ -37,6 +39,27 @@ public class GrowthMessage {
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
+
+	}
+
+	public void openMessageIfAvailable() {
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				logger.info("Check message...");
+
+				try {
+					Message message = Message.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+					logger.info(String.format("Message is found. (id: %s)", message.getId()));
+					// TODO Show message dialog
+				} catch (GrowthbeatException e) {
+					logger.info(String.format("Message is not found.", e.getMessage()));
+				}
+
+			}
+		}).start();
 
 	}
 
