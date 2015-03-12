@@ -14,15 +14,15 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-//		GrowthMessage.getInstance().initialize(getApplicationContext(), "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
-//		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
+		GrowthMessage.getInstance().initialize(MainActivity.this, "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
+		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
 
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-//		GrowthMessage.getInstance().openMessageIfAvailable();
+		GrowthMessage.getInstance().openMessageIfAvailable();
 	}
 
 	@Override
