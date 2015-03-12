@@ -1,6 +1,9 @@
 package com.growthbeat.message;
 
+import java.util.ArrayList;
+
 import android.content.Context;
+import android.os.Handler;
 
 import com.growthbeat.CatchableThread;
 import com.growthbeat.GrowthbeatCore;
@@ -24,6 +27,8 @@ public class GrowthMessage {
 	private String applicationId = null;
 	private String credentialId = null;
 
+    ArrayList<BasicMassageHandler> messageHandlers;
+
 	private GrowthMessage() {
 		super();
 	}
@@ -40,10 +45,13 @@ public class GrowthMessage {
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
+		messageHandlers = new ArrayList<BasicMassageHandler>();
+		messageHandlers.add(new BasicMassageHandler(context));
 	}
 
 	public void openMessageIfAvailable() {
 
+		final Handler handler = new Handler();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -51,16 +59,30 @@ public class GrowthMessage {
 				logger.info("Check message...");
 
 				try {
-					Message message = Message.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+					final Message message = Message.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
 					logger.info(String.format("Message is found. (id: %s)", message.getId()));
+				
 					// TODO Show message dialog
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							openMessage(message);
+						}
+					});
+
 				} catch (GrowthbeatException e) {
 					logger.info(String.format("Message is not found.", e.getMessage()));
 				}
-
 			}
+			
 		}).start();
-
+	}
+	
+	public void openMessage(Message message) {
+		for (BasicMassageHandler handler : messageHandlers)
+		{
+			handler.handleMessage(message);
+		}
 	}
 
 	public String getApplicationId() {

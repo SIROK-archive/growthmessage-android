@@ -12,6 +12,9 @@ public class Button extends Model {
 	private String intent; //TODO
 	private String event;
 
+	public Button() {
+	}
+
 	private Button(JSONObject jsonObject) {
 		setJsonObject(jsonObject);
 	}
