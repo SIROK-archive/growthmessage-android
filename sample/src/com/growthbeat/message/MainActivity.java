@@ -15,7 +15,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 
 		GrowthMessage.getInstance().initialize(MainActivity.this, "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
-		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
+		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://stg.message.growthbeat.com/");
 
 	}
 

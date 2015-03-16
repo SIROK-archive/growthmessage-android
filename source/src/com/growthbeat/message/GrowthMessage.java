@@ -11,12 +11,14 @@ import com.growthbeat.GrowthbeatException;
 import com.growthbeat.Logger;
 import com.growthbeat.Preference;
 import com.growthbeat.http.GrowthbeatHttpClient;
-import com.growthbeat.message.model.Message;
+import com.growthbeat.message.model.GMButton;
+import com.growthbeat.message.model.GMIntent;
+import com.growthbeat.message.model.GMMessage;
 
 public class GrowthMessage {
 
 	public static final String LOGGER_DEFAULT_TAG = "GrowthMessage";
-	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.message.growthbeat.com/";
+	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://stg.message.growthbeat.com/";
 	public static final String PREFERENCE_DEFAULT_FILE_NAME = "growthmessage-preferences";
 
 	private static final GrowthMessage instance = new GrowthMessage();
@@ -26,9 +28,14 @@ public class GrowthMessage {
 
 	private String applicationId = null;
 	private String credentialId = null;
+	
+//	GrowthMessageDelegate delegate;
 
-    ArrayList<BasicMassageHandler> messageHandlers;
-
+    ArrayList<MessageHandler> messageHandlers;
+    ArrayList<IntentHandler> intentHandlers;
+    
+//    private String sample;
+    
 	private GrowthMessage() {
 		super();
 	}
@@ -45,10 +52,22 @@ public class GrowthMessage {
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
-		messageHandlers = new ArrayList<BasicMassageHandler>();
+		messageHandlers = new ArrayList<MessageHandler>();
 		messageHandlers.add(new BasicMassageHandler(context));
+		intentHandlers = new ArrayList<IntentHandler>();
+		intentHandlers.add(new OpenBrowserIntentHandler(context));
+		
+		//this is for sample json.
+/*		AssetManager assetManager = context.getResources().getAssets();
+		InputStream is;
+		try {
+		  is = assetManager.open("message_sample.json");
+		  sample = inputStreemToString(is);
+		} catch (Exception e) {
+		  e.printStackTrace();
+		}*/
 	}
-
+	
 	public void openMessageIfAvailable() {
 
 		final Handler handler = new Handler();
@@ -59,10 +78,11 @@ public class GrowthMessage {
 				logger.info("Check message...");
 
 				try {
-					final Message message = Message.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+					final GMMessage message = GMMessage.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+/*					JSONObject sampleJson = new JSONObject(sample);
+					final GMMessage message = new GMMessage();
+					message.setJsonObject(sampleJson);*/
 					logger.info(String.format("Message is found. (id: %s)", message.getId()));
-				
-					// TODO Show message dialog
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
@@ -78,10 +98,11 @@ public class GrowthMessage {
 		}).start();
 	}
 	
-	public void openMessage(Message message) {
-		for (BasicMassageHandler handler : messageHandlers)
+	public void openMessage(GMMessage message) {
+		
+		for (MessageHandler handler : messageHandlers)
 		{
-			handler.handleMessage(message);
+			handler.handleMessage(message, this);
 		}
 	}
 
@@ -104,7 +125,20 @@ public class GrowthMessage {
 	public Preference getPreference() {
 		return preference;
 	}
+	
+	public void didSelectButton(GMButton button, GMMessage message)
+	{
+		handleIntent(button.getIntent());
+	}
 
+	private void handleIntent(GMIntent intent)
+	{
+		for (IntentHandler handler : intentHandlers)
+		{
+			handler.handleIntent(intent);
+		}
+	}
+	
 	private static class Thread extends CatchableThread {
 
 		public Thread(Runnable runnable) {
