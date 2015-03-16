@@ -33,6 +33,7 @@ public class GrowthMessage {
 
     ArrayList<MessageHandler> messageHandlers;
     ArrayList<IntentHandler> intentHandlers;
+    GrowthMessageDelegate delegate;
     
 //    private String sample;
     
@@ -56,6 +57,12 @@ public class GrowthMessage {
 		messageHandlers.add(new BasicMassageHandler(context));
 		intentHandlers = new ArrayList<IntentHandler>();
 		intentHandlers.add(new OpenBrowserIntentHandler(context));
+		delegate = new GrowthMessageDelegate() { //TODO sample
+			@Override
+			public boolean shouldShowMessage(GMMessage message) {
+				return true;
+			}
+		};
 		
 		//this is for sample json.
 /*		AssetManager assetManager = context.getResources().getAssets();
@@ -98,11 +105,14 @@ public class GrowthMessage {
 		}).start();
 	}
 	
-	public void openMessage(GMMessage message) {
-		
-		for (MessageHandler handler : messageHandlers)
+	public void openMessage(GMMessage message)
+	{
+		if (delegate.shouldShowMessage(message))
 		{
-			handler.handleMessage(message, this);
+			for (MessageHandler handler : messageHandlers)
+			{
+				handler.handleMessage(message, this);
+			}
 		}
 	}
 
