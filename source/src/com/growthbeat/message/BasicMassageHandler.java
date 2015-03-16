@@ -41,8 +41,6 @@ public class BasicMassageHandler implements MessageHandler{
                     	manager.didSelectButton(message.getButtons().get(which), message);
                     }
                 });
-
-        // •\Ž¦
         listDlg.create().show();
         return true;
 
