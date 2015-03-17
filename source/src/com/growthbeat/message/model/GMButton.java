@@ -9,7 +9,7 @@ import com.growthbeat.utils.JSONObjectUtils;
 public class GMButton extends Model {
 
 	private String label;
-	private GMIntent intent; //TODO
+	private GMIntent intent;
 
 	public GMButton() {
 		super();
