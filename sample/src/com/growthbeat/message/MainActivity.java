@@ -1,5 +1,9 @@
 package com.growthbeat.message;
 
+import java.util.ArrayList;
+
+import com.growthbeat.message.model.GMMessage;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +20,25 @@ public class MainActivity extends Activity {
 
 		GrowthMessage.getInstance().initialize(MainActivity.this, "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
 		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
+		
+		ArrayList<MessageHandler> messageHandlers;
+		messageHandlers = new ArrayList<MessageHandler>();
+		messageHandlers.add(new BasicMassageHandler(MainActivity.this));
+		GrowthMessage.getInstance().setMessageHandlers(messageHandlers);
+
+		ArrayList<IntentHandler> intentHandlers;
+		intentHandlers = new ArrayList<IntentHandler>();
+		intentHandlers.add(new OpenBrowserIntentHandler(MainActivity.this));
+		intentHandlers.add(new NopeIntentHandler());
+		GrowthMessage.getInstance().setIntentHandlers(intentHandlers);
+
+		GrowthMessageDelegate delegate = new GrowthMessageDelegate() {
+			@Override
+			public boolean shouldShowMessage(GMMessage message) {
+				return true;
+			}
+		};
+		GrowthMessage.getInstance().setDelegate(delegate);
 	}
 
 	@Override

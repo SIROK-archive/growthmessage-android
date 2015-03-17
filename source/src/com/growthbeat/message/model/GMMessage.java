@@ -20,9 +20,10 @@ public class GMMessage extends Model {
 
 	private String id;
 	private Date created;
-	private String title;
-	private String body;
+	private String caption;
+	private String text;
 	private ArrayList<GMButton> buttons;
+	private String type;
 	
 	public GMMessage() {
 		super();
@@ -68,12 +69,22 @@ public class GMMessage extends Model {
 	}
 
 	@Override
-	public JSONObject getJsonObject() { //TODO
+	public JSONObject getJsonObject() {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("id", getId());
 			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			jsonObject.put("caption", getCaption());
+			jsonObject.put("text", getText());
+			jsonObject.put("type", getType());
+			JSONArray array = new JSONArray();
+			for(GMButton button : buttons)
+			{
+				JSONObject buttonJson = button.getJsonObject();
+				array.put(buttonJson);
+			}
+			jsonObject.put("buttons", array);
 		} catch (JSONException e) {
 			return null;
 		}
@@ -92,9 +103,11 @@ public class GMMessage extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "caption"))
-				setTitle(jsonObject.getString("caption"));
+				setCaption(jsonObject.getString("caption"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "text"))
-				setBody(jsonObject.getString("text"));
+				setText(jsonObject.getString("text"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "type"))
+				setType(jsonObject.getString("type"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "buttons"))
 			{
 				JSONArray array = jsonObject.getJSONArray("buttons");
@@ -111,21 +124,12 @@ public class GMMessage extends Model {
 		}
 
 	}
-
-	public String getTitle() {
-		return title;
+	public String getText() {
+		return text;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getBody() {
-		return body;
-	}
-
-	public void setBody(String body) {
-		this.body = body;
+	public void setText(String body) {
+		this.text = body;
 	}
 
 	public ArrayList<GMButton> getButtons() {
@@ -134,5 +138,21 @@ public class GMMessage extends Model {
 
 	public void setButtons(ArrayList<GMButton> buttons) {
 		this.buttons = buttons;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getCaption() {
+		return caption;
+	}
+
+	public void setCaption(String caption) {
+		this.caption = caption;
 	}
 }

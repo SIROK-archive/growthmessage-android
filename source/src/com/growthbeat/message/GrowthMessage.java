@@ -29,11 +29,9 @@ public class GrowthMessage {
 	private String applicationId = null;
 	private String credentialId = null;
 	
-//	GrowthMessageDelegate delegate;
-
-    ArrayList<MessageHandler> messageHandlers;
-    ArrayList<IntentHandler> intentHandlers;
-    GrowthMessageDelegate delegate;
+    private ArrayList<MessageHandler> messageHandlers;
+    private ArrayList<IntentHandler> intentHandlers;
+    private GrowthMessageDelegate delegate;
     
 	private GrowthMessage() {
 		super();
@@ -51,16 +49,6 @@ public class GrowthMessage {
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
-		messageHandlers = new ArrayList<MessageHandler>();
-		messageHandlers.add(new BasicMassageHandler(context));
-		intentHandlers = new ArrayList<IntentHandler>();
-		intentHandlers.add(new OpenBrowserIntentHandler(context));
-		delegate = new GrowthMessageDelegate() { //TODO sample
-			@Override
-			public boolean shouldShowMessage(GMMessage message) {
-				return true;
-			}
-		};
 	}
 	
 	public void openMessageIfAvailable() {
@@ -136,7 +124,20 @@ public class GrowthMessage {
 			handler.handleIntent(intent);
 		}
 	}
-	
+
+	public void setMessageHandlers(ArrayList<MessageHandler> messageHandlers)
+	{
+		this.messageHandlers = messageHandlers;
+	}
+	public void setIntentHandlers(ArrayList<IntentHandler> intentHandlers)
+	{
+		this.intentHandlers = intentHandlers;
+	}
+	public void setDelegate(GrowthMessageDelegate delegate)
+	{
+		this.delegate = delegate;
+	}
+
 	private static class Thread extends CatchableThread {
 
 		public Thread(Runnable runnable) {
@@ -153,5 +154,6 @@ public class GrowthMessage {
 		}
 
 	}
+	
 
 }
