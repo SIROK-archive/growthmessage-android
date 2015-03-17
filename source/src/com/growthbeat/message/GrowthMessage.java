@@ -2,6 +2,9 @@ package com.growthbeat.message;
 
 import java.util.ArrayList;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.content.Context;
 import android.os.Handler;
 
@@ -18,7 +21,7 @@ import com.growthbeat.message.model.GMMessage;
 public class GrowthMessage {
 
 	public static final String LOGGER_DEFAULT_TAG = "GrowthMessage";
-	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://stg.message.growthbeat.com/";
+	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.message.growthbeat.com/";
 	public static final String PREFERENCE_DEFAULT_FILE_NAME = "growthmessage-preferences";
 
 	private static final GrowthMessage instance = new GrowthMessage();
@@ -35,7 +38,7 @@ public class GrowthMessage {
     ArrayList<IntentHandler> intentHandlers;
     GrowthMessageDelegate delegate;
     
-//    private String sample;
+    private String sample;
     
 	private GrowthMessage() {
 		super();
@@ -43,6 +46,11 @@ public class GrowthMessage {
 
 	public static GrowthMessage getInstance() {
 		return instance;
+	}
+	
+	public void setSampleJSON(String sample)
+	{
+		this.sample = sample;
 	}
 
 	public void initialize(final Context context, final String applicationId, final String credentialId) {
@@ -63,16 +71,6 @@ public class GrowthMessage {
 				return true;
 			}
 		};
-		
-		//this is for sample json.
-/*		AssetManager assetManager = context.getResources().getAssets();
-		InputStream is;
-		try {
-		  is = assetManager.open("message_sample.json");
-		  sample = inputStreemToString(is);
-		} catch (Exception e) {
-		  e.printStackTrace();
-		}*/
 	}
 	
 	public void openMessageIfAvailable() {
@@ -86,6 +84,7 @@ public class GrowthMessage {
 
 				try {
 					final GMMessage message = GMMessage.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+//					final GMMessage message = GMMessage.find(applicationId, credentialId);
 /*					JSONObject sampleJson = new JSONObject(sample);
 					final GMMessage message = new GMMessage();
 					message.setJsonObject(sampleJson);*/
@@ -98,6 +97,9 @@ public class GrowthMessage {
 					});
 
 				} catch (GrowthbeatException e) {
+					logger.info(String.format("Message is not found.", e.getMessage()));
+				}
+				catch (Exception e) {
 					logger.info(String.format("Message is not found.", e.getMessage()));
 				}
 			}

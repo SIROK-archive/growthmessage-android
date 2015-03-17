@@ -43,9 +43,12 @@ public class GMMessage extends Model {
 			params.put("clientId", clientId);
 		if (credentialId != null)
 			params.put("credentialId", credentialId);
+		params.put("eventId", "Event:P5C3vzoLOEijnlVj:Default:Open");
 
 //		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().get("0/messages", params);
-		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().post("0/messages", params);
+		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().post("0/message", params);
+		
+		Log.d("json", jsonObject.toString());
 		
 		return new GMMessage(jsonObject);
 
@@ -155,8 +158,8 @@ public class GMMessage extends Model {
 
 	public static String getSampleJSON()
     {
-		String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\n    \"title\": \"ƒ^ƒCƒgƒ‹\",\n    \"body\": \"–{•¶\",\n    \"buttons\": [{\n        \"label\": \"ƒ{ƒ^ƒ“1\",\n        \"action\":\"open-browser\",\n        \"data\":{\n            \"url\":\"http://sirok.co.jp\"\n        }\n    }\n]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
-//        String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\"title\": \"ƒ^ƒCƒgƒ‹\",\"body\": \"–{•¶\",\"buttons\": [{\"label\": \"ƒ{ƒ^ƒ“1\",\"action\":\"open-browser\",\"data\":{\"url\":\"http://sirok.co.jp\"}}]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
+		String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\n    \"title\": \"ï¿½^ï¿½Cï¿½gï¿½ï¿½\",\n    \"body\": \"ï¿½{ï¿½ï¿½\",\n    \"buttons\": [{\n        \"label\": \"ï¿½{ï¿½^ï¿½ï¿½1\",\n        \"action\":\"open-browser\",\n        \"data\":{\n            \"url\":\"http://sirok.co.jp\"\n        }\n    }\n]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
+//        String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\"title\": \"ï¿½^ï¿½Cï¿½gï¿½ï¿½\",\"body\": \"ï¿½{ï¿½ï¿½\",\"buttons\": [{\"label\": \"ï¿½{ï¿½^ï¿½ï¿½1\",\"action\":\"open-browser\",\"data\":{\"url\":\"http://sirok.co.jp\"}}]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
 		
 /*		AssetManager assetManager =  getResources().getAssets();
 		InputStream is;
