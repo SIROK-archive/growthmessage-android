@@ -105,26 +105,20 @@ public class GMMessage extends Model {
 				setId(jsonObject.getString("id"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "data"))
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "caption"))
+				setTitle(jsonObject.getString("caption"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "text"))
+				setBody(jsonObject.getString("text"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "buttons"))
 			{
-				String jdonDataString = jsonObject.getString("data");
-				JSONObject jsonData = new JSONObject(jdonDataString);
-//				JSONObject jsonData = jsonObject.getJSONObject("data");
-				if (JSONObjectUtils.hasAndIsNotNull(jsonData, "title"))
-					setTitle(jsonData.getString("title"));
-				if (JSONObjectUtils.hasAndIsNotNull(jsonData, "body"))
-					setBody(jsonData.getString("body"));
-				if (JSONObjectUtils.hasAndIsNotNull(jsonData, "buttons"))
-				{
-					JSONArray array = jsonData.getJSONArray("buttons");
-		            for(int i = 0; i < array.length(); i++)
-		            {
-		                JSONObject jsonButton = array.getJSONObject(i);
-		                GMButton button = new GMButton();
-		                button.setJsonObject(jsonButton);
-		                buttons.add(button);
-		            }
-				}
+				JSONArray array = jsonObject.getJSONArray("buttons");
+	            for(int i = 0; i < array.length(); i++)
+	            {
+	                JSONObject jsonButton = array.getJSONObject(i);
+	                GMButton button = new GMButton();
+	                button.setJsonObject(jsonButton);
+	                buttons.add(button);
+	            }
 			}
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");

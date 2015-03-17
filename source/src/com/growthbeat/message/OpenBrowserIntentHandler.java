@@ -20,13 +20,12 @@ public class OpenBrowserIntentHandler implements IntentHandler {
 	
 	@Override
 	public boolean handleIntent(GMIntent intent) {
-		if (intent.getAction().equals("openBrowser"))
+		if (intent.getType().equals("open_url"))
 		{
 			boolean error = false;
 			try
 			{
-				HashMap<String, String> map = intent.getData();
-				Uri uri = Uri.parse(map.get("url"));
+				Uri uri = Uri.parse(intent.getUrl());
 				Intent i = new Intent(Intent.ACTION_VIEW, uri);
 				i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				context.startActivity(i);

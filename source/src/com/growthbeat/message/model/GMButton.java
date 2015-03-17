@@ -10,29 +10,18 @@ public class GMButton extends Model {
 
 	private String label;
 	private GMIntent intent; //TODO
-	private String action;
 
 	public GMButton() {
+		super();
+		intent = new GMIntent();
 	}
 
-/*	private Button(JSONObject jsonObject) {
-		setJsonObject(jsonObject);
-	}*/
-	
 	public String getLabel() {
 		return label;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public void setAction(String event) {
-		this.action = event;
 	}
 
 	public GMIntent getIntent() {
@@ -49,8 +38,7 @@ public class GMButton extends Model {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("label", getLabel());
-			jsonObject.put("event", getAction());
-			jsonObject.put("data", intent.getJsonObject());
+			jsonObject.put("intent", intent.getJsonObject());
 		} catch (JSONException e) {
 			return null;
 		}
@@ -68,12 +56,10 @@ public class GMButton extends Model {
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "label"))
 				setLabel(jsonObject.getString("label"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "event"))
-				setAction(jsonObject.getString("event"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "data"))
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
 			{
 				GMIntent intent = new GMIntent();
-				intent.setJsonObject(jsonObject.getJSONObject("data"));
+				intent.setJsonObject(jsonObject.getJSONObject("intent"));
 				setIntent(intent);
 			}
 		} catch (JSONException e) {

@@ -6,7 +6,7 @@ public class NopeIntentHandler implements IntentHandler {
 
 	@Override
 	public boolean handleIntent(GMIntent intent) {
-		if (intent.getAction().equals("nope"))
+		if (intent.getType().equals("noop"))
 			return true;
 		else 
 			return false;

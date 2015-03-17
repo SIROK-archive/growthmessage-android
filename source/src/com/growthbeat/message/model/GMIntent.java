@@ -14,12 +14,13 @@ import com.growthbeat.utils.JSONObjectUtils;
 
 public class GMIntent extends Model{
 
-	private String action;
-	private HashMap<String, String> data;
+	private String type;
+	private String url;
+//	private HashMap<String, String> data;
 	
 	public GMIntent() {
 		super();
-		setData(new HashMap<String, String>());
+//		setData(new HashMap<String, String>());
 	}
 
 	@Override
@@ -27,9 +28,10 @@ public class GMIntent extends Model{
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("action", getAction());
+			jsonObject.put("type", getType());
+			jsonObject.put("url", getUrl());
 
-			JSONArray array = new JSONArray();
+/*			JSONArray array = new JSONArray();
 			Iterator entries = data.entrySet().iterator();
 			while (entries.hasNext())
 			{
@@ -38,7 +40,7 @@ public class GMIntent extends Model{
 				json.put((String)entry.getKey(), (String)entry.getValue());
 				array.put(json);
 			}
-			jsonObject.put("data", array);
+			jsonObject.put("data", array);*/
 		} catch (JSONException e) {
 			return null;
 		}
@@ -52,9 +54,11 @@ public class GMIntent extends Model{
 			return;
 
 		try {
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "action"))
-				setAction(jsonObject.getString("action"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "data"))
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "type"))
+				setType(jsonObject.getString("type"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "url"))
+				setUrl(jsonObject.getString("url"));
+/*			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "data"))
 			{
 				HashMap<String, String> map = new HashMap<String, String>();
 				JSONArray array = jsonObject.getJSONArray("data");
@@ -65,27 +69,27 @@ public class GMIntent extends Model{
 					String key = (String)keys.next();
 					map.put(key, json.getString(key));
 				}
-			}
+			}*/
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");
 		}
 
 	}
 
-	
-	public String getAction() {
-		return action;
+	public String getType() {
+		return type;
 	}
 
-	public void setAction(String action) {
-		this.action = action;
+	public void setType(String type) {
+		this.type = type;
 	}
 
-	public HashMap<String, String> getData() { //TODO
-		return data;
+	public String getUrl() {
+		return url;
 	}
 
-	public void setData(HashMap<String, String> data) {
-		this.data = data;
+	public void setUrl(String url) {
+		this.url = url;
 	}
+
 }
