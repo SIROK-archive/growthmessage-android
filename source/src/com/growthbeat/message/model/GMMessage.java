@@ -9,8 +9,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.growthbeat.message.GrowthMessage;
@@ -51,18 +49,6 @@ public class GMMessage extends Model {
 		Log.d("json", jsonObject.toString());
 		
 		return new GMMessage(jsonObject);
-
-		/*String sample = getSampleJSON();
-		try
-		{
-			JSONObject sampleJson = new JSONObject(sample);
-			return new GMMessage(sampleJson);
-		}
-		catch (Exception e)
-		{
-			Log.e("error", e.toString());
-		}*/
-//		return null;
 	}
 
 	public String getId() {
@@ -149,20 +135,4 @@ public class GMMessage extends Model {
 	public void setButtons(ArrayList<GMButton> buttons) {
 		this.buttons = buttons;
 	}
-
-	public static String getSampleJSON()
-    {
-		String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\n    \"title\": \"�^�C�g��\",\n    \"body\": \"�{��\",\n    \"buttons\": [{\n        \"label\": \"�{�^��1\",\n        \"action\":\"open-browser\",\n        \"data\":{\n            \"url\":\"http://sirok.co.jp\"\n        }\n    }\n]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
-//        String sample = "{\"id\":\"P5Ms123456789msg\",\"updated\":\"2015-02-25T19:22:33+0000\",\"name\":\"P6bbAwniulnAo8ox;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Segment:P5C3vzoLOEijnlVj:Custom:testsegment1\",\"targetSegment\":null,\"targetEvent\":null,\"created\":\"2015-02-25T19:22:33+0000\",\"data\":\"{\"title\": \"�^�C�g��\",\"body\": \"�{��\",\"buttons\": [{\"label\": \"�{�^��1\",\"action\":\"open-browser\",\"data\":{\"url\":\"http://sirok.co.jp\"}}]}\",\"format\":\"plain\",\"version\":0,\"availableTo\":null,\"availableFrom\":null,\"deleted\":null}";
-		
-/*		AssetManager assetManager =  getResources().getAssets();
-		InputStream is;
-		try {
-		  is = assetManager.open("images/test.jpg");
-		} catch (IOException e) {
-		  e.printStackTrace();
-		}*/
-		return sample;
-    }
-	
 }
