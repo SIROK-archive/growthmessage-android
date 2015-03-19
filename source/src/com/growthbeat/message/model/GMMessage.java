@@ -11,7 +11,6 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
@@ -24,10 +23,12 @@ public class GMMessage extends Model {
 	private String text;
 	private ArrayList<GMButton> buttons;
 	private String type;
+	private GMTask task;
 	
 	public GMMessage() {
 		super();
 		buttons = new ArrayList<GMButton>();
+		setTask(new GMTask());
 	}
 
 	private GMMessage(JSONObject jsonObject) {
@@ -76,6 +77,7 @@ public class GMMessage extends Model {
 			jsonObject.put("caption", getCaption());
 			jsonObject.put("text", getText());
 			jsonObject.put("type", getType());
+			jsonObject.put("task", task.getJsonObject());
 			JSONArray array = new JSONArray();
 			for(GMButton button : buttons)
 			{
@@ -106,6 +108,12 @@ public class GMMessage extends Model {
 				setText(jsonObject.getString("text"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "type"))
 				setType(jsonObject.getString("type"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "task"))
+			{
+				GMTask task = new GMTask();
+				task.setJsonObject(jsonObject.getJSONObject("task"));
+				setTask(task);
+			}
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "buttons"))
 			{
 				JSONArray array = jsonObject.getJSONArray("buttons");
