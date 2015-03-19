@@ -33,3 +33,4 @@ proguard/
 .DS_Store
 .project
 .metadata
+.settings
