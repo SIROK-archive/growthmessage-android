@@ -1,6 +1,8 @@
 package com.growthbeat.message;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Context;
 import android.os.Handler;
@@ -10,6 +12,7 @@ import com.growthbeat.GrowthbeatCore;
 import com.growthbeat.GrowthbeatException;
 import com.growthbeat.Logger;
 import com.growthbeat.Preference;
+import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
 import com.growthbeat.message.model.GMButton;
 import com.growthbeat.message.model.GMIntent;
@@ -18,7 +21,7 @@ import com.growthbeat.message.model.GMMessage;
 public class GrowthMessage {
 
 	public static final String LOGGER_DEFAULT_TAG = "GrowthMessage";
-	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.message.growthbeat.com/";
+	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.stg.message.growthbeat.com/";
 	public static final String PREFERENCE_DEFAULT_FILE_NAME = "growthmessage-preferences";
 
 	private static final GrowthMessage instance = new GrowthMessage();
@@ -87,8 +90,22 @@ public class GrowthMessage {
 		{
 			for (MessageHandler handler : messageHandlers)
 			{
-				handler.handleMessage(message, this);
+				if (handler.handleMessage(message, this))
+				{
+					Map<String, String> properties = new HashMap<String, String>();
+					properties.put("taskId", message.getTask().getId());
+					properties.put("messageId", message.getId());
+					GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:ShowMessage", properties);
+				}
+				else
+				{
+					//not handled by the handler
+				}
 			}
+		}
+		else
+		{
+			logger.info("Message is found. (id: " + message.getId()+ ")");
 		}
 	}
 
@@ -115,6 +132,13 @@ public class GrowthMessage {
 	public void didSelectButton(GMButton button, GMMessage message)
 	{
 		handleIntent(button.getIntent());
+
+		Map<String, String> properties = new HashMap<String, String>();
+		properties.put("taskId", message.getTask().getId());
+		properties.put("messageId", message.getId());
+		properties.put("buttonId", button.getId());
+		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
+
 	}
 
 	private void handleIntent(GMIntent intent)
