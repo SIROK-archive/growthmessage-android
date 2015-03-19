@@ -40,8 +40,7 @@ public class GMButton extends Model {
 			jsonObject.put("label", getLabel());
 			jsonObject.put("intent", intent.getJsonObject());
 		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalArgumentException("Failed to get JSON.");
 		}
 
 		return jsonObject;

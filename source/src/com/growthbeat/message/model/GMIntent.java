@@ -23,8 +23,7 @@ public class GMIntent extends Model{
 			jsonObject.put("type", getType());
 			jsonObject.put("url", getUrl());
 		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalArgumentException("Failed to get JSON.");
 		}
 		return jsonObject;
 	}

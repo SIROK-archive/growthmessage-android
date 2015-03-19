@@ -44,11 +44,9 @@ public class GMMessage extends Model {
 			params.put("credentialId", credentialId);
 		params.put("eventId", "Event:P5C3vzoLOEijnlVj:Default:Open");
 
-//		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().get("0/messages", params);
 		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().post("0/message", params);
-		
+
 		Log.d("json", jsonObject.toString());
-		
 		return new GMMessage(jsonObject);
 	}
 
@@ -86,8 +84,7 @@ public class GMMessage extends Model {
 			}
 			jsonObject.put("buttons", array);
 		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
+			throw new IllegalArgumentException("Failed to get JSON.");
 		}
 		return jsonObject;
 	}
@@ -156,4 +153,12 @@ public class GMMessage extends Model {
 	public void setCaption(String caption) {
 		this.caption = caption;
 	}
+	
+	private static String getSampleJSON()
+	{
+		String sample = "{\"id\":\"P71l6apl8usq3cUA\",\"availableTo\":null,\"text\":\"本文\",\"eventId\":\"Event:P5C3vzoLOEijnlVj:Default:Open\",\"segmentId\":null,\"created\":\"2015-03-15T18:40:22+0000\",\"task\":{\"id\":\"P5MsD33SuHNJw1X5\",\"applicationId\":\"P5C3vzoLOEijnlVj\",\"updated\":\"2015-02-26T04:22:33+0000\",\"created\":\"2015-02-26T04:22:33+0000\",\"description\":\"アプリ起動時のメッセージです。\",\"name\":\"起動メッセージ\"},\"name\":\"P6cDLi0EC9Z0w6h3;btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY;Event:P5C3vzoLOEijnlVj:Default:Open\",\"availableFrom\":null,\"buttons\":[{\"message\":null,\"id\":\"P77jQYUqC0yu6G3i\",\"label\":\"ボタン1\",\"type\":\"plain\",\"intent\":{\"id\":\"P71nAJH1cujbA7om\",\"applicationId\":\"P5C3vzoLOEijnlVj\",\"type\":\"open_url\",\"created\":\"2015-03-15T18:48:33+0000\",\"url\":\"http://sirok.co.jp/\",\"name\":\"コーポレートサイト\"},\"created\":\"2015-03-16T19:11:20+0000\"},{\"message\":null,\"id\":\"P77jY7aFlJ3ixzCw\",\"label\":\"ボタン2\",\"type\":\"plain\",\"intent\":{\"id\":\"P71nD3JxgjXQCnUI\",\"applicationId\":\"P5C3vzoLOEijnlVj\",\"type\":\"noop\",\"created\":\"2015-03-15T18:48:44+0000\",\"name\":\"何もしない\"},\"created\":\"2015-03-16T19:11:49+0000\"}],\"caption\":\"タイトル\",\"type\":\"plain\",\"version\":0}";
+		return sample;
+		
+	}
+	
 }
