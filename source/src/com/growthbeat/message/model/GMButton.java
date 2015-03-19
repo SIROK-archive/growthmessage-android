@@ -1,27 +1,24 @@
 package com.growthbeat.message.model;
 
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.growthbeat.model.Model;
+import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
 public class GMButton extends Model {
 
+	private String id;
 	private String label;
+	private Date created;
 	private GMIntent intent;
 
 	public GMButton() {
 		super();
 		intent = new GMIntent();
-	}
-
-	public String getLabel() {
-		return label;
-	}
-
-	public void setLabel(String label) {
-		this.label = label;
 	}
 
 	public GMIntent getIntent() {
@@ -37,7 +34,9 @@ public class GMButton extends Model {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
+			jsonObject.put("id", getId());
 			jsonObject.put("label", getLabel());
+			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
 			jsonObject.put("intent", intent.getJsonObject());
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
@@ -54,8 +53,12 @@ public class GMButton extends Model {
 			return;
 
 		try {
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
+				setId(jsonObject.getString("id"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "label"))
 				setLabel(jsonObject.getString("label"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
+				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
 			{
 				GMIntent intent = new GMIntent();
@@ -65,6 +68,30 @@ public class GMButton extends Model {
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");
 		}
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 
