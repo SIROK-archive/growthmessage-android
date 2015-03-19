@@ -86,6 +86,7 @@ public class GMMessage extends Model {
 			}
 			jsonObject.put("buttons", array);
 		} catch (JSONException e) {
+			e.printStackTrace();
 			return null;
 		}
 		return jsonObject;
