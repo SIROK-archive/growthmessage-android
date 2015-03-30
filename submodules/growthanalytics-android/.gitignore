@@ -31,6 +31,3 @@ proguard/
 
 .idea
 .DS_Store
-.project
-.metadata
-.settings

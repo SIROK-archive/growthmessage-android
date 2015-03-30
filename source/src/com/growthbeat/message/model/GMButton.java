@@ -1,43 +1,73 @@
 package com.growthbeat.message.model;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
-public class Message extends Model {
+public class GMButton extends Model {
 
 	private String id;
-
+	private String label;
 	private Date created;
+	private GMIntent intent;
 
-	public Message() {
+	public GMButton() {
 		super();
+		intent = new GMIntent();
 	}
 
-	private Message(JSONObject jsonObject) {
-		setJsonObject(jsonObject);
+	public GMIntent getIntent() {
+		return intent;
 	}
 
-	public static Message find(String clientId, String credentialId) {
+	public void setIntent(GMIntent intent) {
+		this.intent = intent;
+	}
 
-		Map<String, Object> params = new HashMap<String, Object>();
-		if (clientId != null)
-			params.put("clientId", clientId);
-		if (credentialId != null)
-			params.put("credentialId", credentialId);
+	@Override
+	public JSONObject getJsonObject() {
 
-		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().get("1/messages", params);
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("id", getId());
+			jsonObject.put("label", getLabel());
+			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			jsonObject.put("intent", intent.getJsonObject());
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Failed to get JSON.");
+		}
 
-		return new Message(jsonObject);
+		return jsonObject;
 
+	}
+
+	@Override
+	public void setJsonObject(JSONObject jsonObject) {
+
+		if (jsonObject == null)
+			return;
+
+		try {
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
+				setId(jsonObject.getString("id"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "label"))
+				setLabel(jsonObject.getString("label"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
+				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
+			{
+				GMIntent intent = new GMIntent();
+				intent.setJsonObject(jsonObject.getJSONObject("intent"));
+				setIntent(intent);
+			}
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Failed to parse JSON.");
+		}
 	}
 
 	public String getId() {
@@ -56,35 +86,13 @@ public class Message extends Model {
 		this.created = created;
 	}
 
-	@Override
-	public JSONObject getJsonObject() {
-
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("id", getId());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-		} catch (JSONException e) {
-			return null;
-		}
-
-		return jsonObject;
-
+	public String getLabel() {
+		return label;
 	}
 
-	@Override
-	public void setJsonObject(JSONObject jsonObject) {
-
-		if (jsonObject == null)
-			return;
-
-		try {
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
-				setId(jsonObject.getString("id"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
-				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
-		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
-		}
-
+	public void setLabel(String label) {
+		this.label = label;
 	}
+
+
 }
