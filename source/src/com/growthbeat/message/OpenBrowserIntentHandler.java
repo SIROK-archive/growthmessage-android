@@ -18,7 +18,7 @@ public class OpenBrowserIntentHandler implements IntentHandler {
 	
 	@Override
 	public boolean handleIntent(GMIntent intent) {
-		if (intent.getType().equals("open_url"))
+		if (intent.getType().equals("url"))
 		{
 			boolean error = false;
 			try
