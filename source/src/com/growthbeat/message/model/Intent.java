@@ -6,12 +6,12 @@ import org.json.JSONObject;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.JSONObjectUtils;
 
-public class GMIntent extends Model{
+public class Intent extends Model{
 
 	private String type;
 	private String url;
 	
-	public GMIntent() {
+	public Intent() {
 		super();
 	}
 

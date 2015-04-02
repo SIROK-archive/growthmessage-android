@@ -1,9 +1,9 @@
 package com.growthbeat.message;
 
-import com.growthbeat.message.model.GMIntent;
+import com.growthbeat.message.model.Intent;
 
 public interface IntentHandler {
 
-	boolean handleIntent(GMIntent intent);
+	boolean handleIntent(Intent intent);
 	
 }

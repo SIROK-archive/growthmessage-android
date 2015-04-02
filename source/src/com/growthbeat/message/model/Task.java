@@ -9,43 +9,36 @@ import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
-
-public class GMTask extends Model
-{
+public class Task extends Model {
 	private String id;
 	private String applicationId;
 	private String name;
 	private String description;
 	private Date created;
 	private Date updated;
-	
-	
-	public GMTask() {
+
+	public Task() {
 		super();
 	}
-	
+
 	@Override
 	public JSONObject getJsonObject() {
 		JSONObject jsonObject = new JSONObject();
-		try
-		{
+		try {
 			jsonObject.put("id", getId());
 			jsonObject.put("applicationId", getApplicationId());
 			jsonObject.put("name", getName());
 			jsonObject.put("description", getDescription());
 			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
 			jsonObject.put("updated", DateUtils.formatToDateTimeString(updated));
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
 		return jsonObject;
 	}
 
 	@Override
-	public void setJsonObject(JSONObject jsonObject)
-	{
+	public void setJsonObject(JSONObject jsonObject) {
 		if (jsonObject == null)
 			return;
 
@@ -65,7 +58,7 @@ public class GMTask extends Model
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");
 		}
-		
+
 	}
 
 	public String getId() {

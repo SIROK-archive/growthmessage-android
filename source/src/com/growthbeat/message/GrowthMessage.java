@@ -14,9 +14,9 @@ import com.growthbeat.Logger;
 import com.growthbeat.Preference;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
-import com.growthbeat.message.model.GMButton;
-import com.growthbeat.message.model.GMIntent;
-import com.growthbeat.message.model.GMMessage;
+import com.growthbeat.message.model.Button;
+import com.growthbeat.message.model.Intent;
+import com.growthbeat.message.model.Message;
 
 public class GrowthMessage {
 
@@ -31,11 +31,11 @@ public class GrowthMessage {
 
 	private String applicationId = null;
 	private String credentialId = null;
-	
-    private ArrayList<MessageHandler> messageHandlers;
-    private ArrayList<IntentHandler> intentHandlers;
-    private GrowthMessageDelegate delegate;
-    
+
+	private ArrayList<MessageHandler> messageHandlers;
+	private ArrayList<IntentHandler> intentHandlers;
+	private GrowthMessageDelegate delegate;
+
 	private GrowthMessage() {
 		super();
 	}
@@ -43,7 +43,7 @@ public class GrowthMessage {
 	public static GrowthMessage getInstance() {
 		return instance;
 	}
-	
+
 	public void initialize(final Context context, final String applicationId, final String credentialId) {
 
 		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
@@ -53,8 +53,8 @@ public class GrowthMessage {
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
 	}
-	
-	public void openMessageIfAvailable() {
+
+	public void recevieMessage(final String eventId) {
 
 		final Handler handler = new Handler();
 		new Thread(new Runnable() {
@@ -64,7 +64,7 @@ public class GrowthMessage {
 				logger.info("Check message...");
 
 				try {
-					final GMMessage message = GMMessage.find(GrowthbeatCore.getInstance().waitClient().getId(), credentialId);
+					final Message message = Message.receive(GrowthbeatCore.getInstance().waitClient().getId(), eventId, credentialId);
 					logger.info(String.format("Message is found. (id: %s)", message.getId()));
 					handler.post(new Runnable() {
 						@Override
@@ -75,37 +75,28 @@ public class GrowthMessage {
 
 				} catch (GrowthbeatException e) {
 					logger.info(String.format("Message is not found.", e.getMessage()));
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					logger.info(String.format("Message is not found.", e.getMessage()));
 				}
 			}
-			
+
 		}).start();
 	}
-	
-	public void openMessage(GMMessage message)
-	{
-		if (delegate.shouldShowMessage(message))
-		{
-			for (MessageHandler handler : messageHandlers)
-			{
-				if (handler.handleMessage(message, this))
-				{
+
+	public void openMessage(Message message) {
+		if (delegate.shouldShowMessage(message)) {
+			for (MessageHandler handler : messageHandlers) {
+				if (handler.handleMessage(message, this)) {
 					Map<String, String> properties = new HashMap<String, String>();
 					properties.put("taskId", message.getTask().getId());
 					properties.put("messageId", message.getId());
 					GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:ShowMessage", properties);
-				}
-				else
-				{
-					//not handled by the handler
+				} else {
+					// not handled by the handler
 				}
 			}
-		}
-		else
-		{
-			logger.info("Message is found. (id: " + message.getId()+ ")");
+		} else {
+			logger.info("Message is found. (id: " + message.getId() + ")");
 		}
 	}
 
@@ -128,9 +119,8 @@ public class GrowthMessage {
 	public Preference getPreference() {
 		return preference;
 	}
-	
-	public void didSelectButton(GMButton button, GMMessage message)
-	{
+
+	public void didSelectButton(Button button, Message message) {
 		handleIntent(button.getIntent());
 
 		Map<String, String> properties = new HashMap<String, String>();
@@ -141,24 +131,21 @@ public class GrowthMessage {
 
 	}
 
-	private void handleIntent(GMIntent intent)
-	{
-		for (IntentHandler handler : intentHandlers)
-		{
+	private void handleIntent(Intent intent) {
+		for (IntentHandler handler : intentHandlers) {
 			handler.handleIntent(intent);
 		}
 	}
 
-	public void setMessageHandlers(ArrayList<MessageHandler> messageHandlers)
-	{
+	public void setMessageHandlers(ArrayList<MessageHandler> messageHandlers) {
 		this.messageHandlers = messageHandlers;
 	}
-	public void setIntentHandlers(ArrayList<IntentHandler> intentHandlers)
-	{
+
+	public void setIntentHandlers(ArrayList<IntentHandler> intentHandlers) {
 		this.intentHandlers = intentHandlers;
 	}
-	public void setDelegate(GrowthMessageDelegate delegate)
-	{
+
+	public void setDelegate(GrowthMessageDelegate delegate) {
 		this.delegate = delegate;
 	}
 
@@ -178,6 +165,5 @@ public class GrowthMessage {
 		}
 
 	}
-	
 
 }

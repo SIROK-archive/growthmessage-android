@@ -1,9 +1,9 @@
 package com.growthbeat.message;
 
-import com.growthbeat.message.model.GMMessage;
+import com.growthbeat.message.model.Message;
 
 public interface MessageHandler {
 
-	boolean handleMessage (GMMessage message, GrowthMessage manager);
+	boolean handleMessage (Message message, GrowthMessage manager);
 
 }

@@ -9,23 +9,23 @@ import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
-public class GMButton extends Model {
+public class Button extends Model {
 
 	private String id;
 	private String label;
 	private Date created;
-	private GMIntent intent;
+	private Intent intent;
 
-	public GMButton() {
+	public Button() {
 		super();
-		intent = new GMIntent();
+		intent = new Intent();
 	}
 
-	public GMIntent getIntent() {
+	public Intent getIntent() {
 		return intent;
 	}
 
-	public void setIntent(GMIntent intent) {
+	public void setIntent(Intent intent) {
 		this.intent = intent;
 	}
 
@@ -61,7 +61,7 @@ public class GMButton extends Model {
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
 			{
-				GMIntent intent = new GMIntent();
+				Intent intent = new Intent();
 				intent.setJsonObject(jsonObject.getJSONObject("intent"));
 				setIntent(intent);
 			}

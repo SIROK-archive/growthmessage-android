@@ -1,9 +1,9 @@
 package com.growthbeat.message;
 
-import com.growthbeat.message.model.GMMessage;
+import com.growthbeat.message.model.Message;
 
 public interface GrowthMessageDelegate {
 
-	boolean shouldShowMessage(GMMessage message);
+	boolean shouldShowMessage(Message message);
 	
 }
