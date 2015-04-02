@@ -138,8 +138,13 @@ public class Message extends Model {
 		JSONObject jsonObject = new JSONObject();
 		try {
 			jsonObject.put("id", getId());
+			jsonObject.put("version", getVersion());
+			jsonObject.put("type", getType().toString());
+			jsonObject.put("eventId", getEventId());
+			jsonObject.put("frequency", getFrequency());
+			jsonObject.put("segmentId", getSegmentId());
+			jsonObject.put("cap", getCap());
 			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("type", getType());
 			jsonObject.put("task", task.getJsonObject());
 			JSONArray array = new JSONArray();
 			for (Button button : buttons) {
@@ -162,10 +167,20 @@ public class Message extends Model {
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
 				setId(jsonObject.getString("id"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
-				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "version"))
+				setVersion(jsonObject.getInt("version"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "type"))
 				setType(Type.valueOf(jsonObject.getString("type")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "eventId"))
+				setEventId(jsonObject.getString("eventId"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "frequency"))
+				setFrequency(jsonObject.getInt("frequency"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "segmentId"))
+				setSegmentId(jsonObject.getString("segmentId"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "cap"))
+				setCap(jsonObject.getInt("cap"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
+				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "task")) {
 				Task task = new Task();
 				task.setJsonObject(jsonObject.getJSONObject("task"));
