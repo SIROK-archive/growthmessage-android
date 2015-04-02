@@ -2,11 +2,11 @@ package com.growthbeat.message;
 
 import java.util.ArrayList;
 
-import com.growthbeat.message.model.GMMessage;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
+import com.growthbeat.message.model.GMMessage;
 
 public class MainActivity extends Activity {
 
@@ -20,7 +20,7 @@ public class MainActivity extends Activity {
 
 		GrowthMessage.getInstance().initialize(getApplicationContext(), "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
 		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
-		
+
 		ArrayList<MessageHandler> messageHandlers;
 		messageHandlers = new ArrayList<MessageHandler>();
 		messageHandlers.add(new BasicMassageHandler(MainActivity.this));
