@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.widget.TextView;
 
 import com.growthbeat.message.model.Message;
+import com.growthbeat.message.model.PlainButton;
 import com.growthbeat.message.model.PlainMessage;
 
 public class BasicMassageHandler implements MessageHandler {
@@ -27,7 +28,8 @@ public class BasicMassageHandler implements MessageHandler {
 
 		ArrayList<String> labels = new ArrayList<String>();
 		for (int i = 0; i < plainMessage.getButtons().size(); i++) {
-			labels.add(plainMessage.getButtons().get(i).getLabel());
+			PlainButton plainButton = (PlainButton) plainMessage.getButtons().get(i);
+			labels.add(plainButton.getLabel());
 		}
 		final CharSequence[] labelsArray = (CharSequence[]) labels.toArray(new CharSequence[0]);
 

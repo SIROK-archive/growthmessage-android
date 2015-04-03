@@ -10,10 +10,14 @@ import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
 public class Task extends Model {
+
 	private String id;
 	private String applicationId;
 	private String name;
 	private String description;
+	private Date availableFrom;
+	private Date availableTo;
+	private boolean disabled;
 	private Date created;
 	private Date updated;
 
@@ -21,44 +25,8 @@ public class Task extends Model {
 		super();
 	}
 
-	@Override
-	public JSONObject getJsonObject() {
-		JSONObject jsonObject = new JSONObject();
-		try {
-			jsonObject.put("id", getId());
-			jsonObject.put("applicationId", getApplicationId());
-			jsonObject.put("name", getName());
-			jsonObject.put("description", getDescription());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("updated", DateUtils.formatToDateTimeString(updated));
-		} catch (Exception e) {
-			throw new IllegalArgumentException("Failed to get JSON.");
-		}
-		return jsonObject;
-	}
-
-	@Override
-	public void setJsonObject(JSONObject jsonObject) {
-		if (jsonObject == null)
-			return;
-
-		try {
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
-				setId(jsonObject.getString("id"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "applicationId"))
-				setApplicationId(jsonObject.getString("applicationId"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "name"))
-				setName(jsonObject.getString("name"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "description"))
-				setDescription(jsonObject.getString("description"));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
-				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "updated"))
-				setUpdated(DateUtils.parseFromDateTimeString(jsonObject.getString("updated")));
-		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
-		}
-
+	public Task(JSONObject jsonObject) {
+		super(jsonObject);
 	}
 
 	public String getId() {
@@ -93,6 +61,30 @@ public class Task extends Model {
 		this.description = description;
 	}
 
+	public Date getAvailableFrom() {
+		return availableFrom;
+	}
+
+	public void setAvailableFrom(Date availableFrom) {
+		this.availableFrom = availableFrom;
+	}
+
+	public Date getAvailableTo() {
+		return availableTo;
+	}
+
+	public void setAvailableTo(Date availableTo) {
+		this.availableTo = availableTo;
+	}
+
+	public boolean getDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
 	public Date getCreated() {
 		return created;
 	}
@@ -107,6 +99,55 @@ public class Task extends Model {
 
 	public void setUpdated(Date updated) {
 		this.updated = updated;
+	}
+
+	@Override
+	public JSONObject getJsonObject() {
+		JSONObject jsonObject = new JSONObject();
+		try {
+			jsonObject.put("id", getId());
+			jsonObject.put("applicationId", getApplicationId());
+			jsonObject.put("name", getName());
+			jsonObject.put("description", getDescription());
+			jsonObject.put("availableFrom", DateUtils.formatToDateTimeString(availableFrom));
+			jsonObject.put("availableTo", DateUtils.formatToDateTimeString(availableTo));
+			jsonObject.put("disabled", getDisabled());
+			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			jsonObject.put("updated", DateUtils.formatToDateTimeString(updated));
+		} catch (Exception e) {
+			throw new IllegalArgumentException("Failed to get JSON.");
+		}
+		return jsonObject;
+	}
+
+	@Override
+	public void setJsonObject(JSONObject jsonObject) {
+		if (jsonObject == null)
+			return;
+
+		try {
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "id"))
+				setId(jsonObject.getString("id"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "applicationId"))
+				setApplicationId(jsonObject.getString("applicationId"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "name"))
+				setName(jsonObject.getString("name"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "description"))
+				setDescription(jsonObject.getString("description"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "availableFrom"))
+				setAvailableFrom(DateUtils.parseFromDateTimeString(jsonObject.getString("availableFrom")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "availableTo"))
+				setAvailableTo(DateUtils.parseFromDateTimeString(jsonObject.getString("availableTo")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "disabled"))
+				setDisabled(jsonObject.getBoolean("disabled"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
+				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "updated"))
+				setUpdated(DateUtils.parseFromDateTimeString(jsonObject.getString("updated")));
+		} catch (JSONException e) {
+			throw new IllegalArgumentException("Failed to parse JSON.");
+		}
+
 	}
 
 }

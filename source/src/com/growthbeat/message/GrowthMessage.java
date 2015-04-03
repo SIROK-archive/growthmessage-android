@@ -126,7 +126,7 @@ public class GrowthMessage {
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("taskId", message.getTask().getId());
 		properties.put("messageId", message.getId());
-		properties.put("buttonId", button.getId());
+		properties.put("intentId", button.getIntent().getId());
 		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
 
 	}
