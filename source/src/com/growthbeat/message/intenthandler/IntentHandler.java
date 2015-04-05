@@ -1,4 +1,4 @@
-package com.growthbeat.message;
+package com.growthbeat.message.intenthandler;
 
 import com.growthbeat.message.model.Intent;
 

@@ -1,4 +1,4 @@
-package com.growthbeat.message;
+package com.growthbeat.message.intenthandler;
 
 import android.content.Context;
 import android.net.Uri;

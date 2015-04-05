@@ -1,4 +1,4 @@
-package com.growthbeat.message;
+package com.growthbeat.message.handler;
 
 import java.util.ArrayList;
 
@@ -7,14 +7,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.widget.TextView;
 
+import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.Message;
 import com.growthbeat.message.model.PlainButton;
 import com.growthbeat.message.model.PlainMessage;
 
-public class BasicMassageHandler implements MessageHandler {
+public class PlainMassageHandler implements MessageHandler {
+
 	Context context;
 
-	public BasicMassageHandler(Context context) {
+	public PlainMassageHandler(Context context) {
 		this.context = context;
 	}
 

@@ -14,6 +14,8 @@ import com.growthbeat.Logger;
 import com.growthbeat.Preference;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
+import com.growthbeat.message.handler.MessageHandler;
+import com.growthbeat.message.intenthandler.IntentHandler;
 import com.growthbeat.message.model.Button;
 import com.growthbeat.message.model.Intent;
 import com.growthbeat.message.model.Message;
@@ -21,7 +23,7 @@ import com.growthbeat.message.model.Message;
 public class GrowthMessage {
 
 	public static final String LOGGER_DEFAULT_TAG = "GrowthMessage";
-	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.stg.message.growthbeat.com/";
+	public static final String HTTP_CLIENT_DEFAULT_BASE_URL = "https://api.message.growthbeat.com/";
 	public static final String PREFERENCE_DEFAULT_FILE_NAME = "growthmessage-preferences";
 
 	private static final GrowthMessage instance = new GrowthMessage();

@@ -1,5 +1,6 @@
-package com.growthbeat.message;
+package com.growthbeat.message.handler;
 
+import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.Message;
 
 public interface MessageHandler {
