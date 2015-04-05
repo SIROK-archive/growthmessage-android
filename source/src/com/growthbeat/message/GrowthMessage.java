@@ -124,7 +124,7 @@ public class GrowthMessage {
 
 	private void handleIntent(Intent intent) {
 		for (IntentHandler intentHandler : intentHandlers)
-			if (intentHandler.handleIntent(intent))
+			if (intentHandler.handle(intent))
 				break;
 	}
 

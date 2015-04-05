@@ -5,7 +5,7 @@ import com.growthbeat.message.model.Intent;
 public class NoopIntentHandler implements IntentHandler {
 
 	@Override
-	public boolean handleIntent(Intent intent) {
+	public boolean handle(Intent intent) {
 		return (intent.getType() == Intent.Type.noop);
 	}
 

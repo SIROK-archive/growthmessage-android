@@ -2,7 +2,6 @@ package com.growthbeat.message.intenthandler;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
 import com.growthbeat.message.model.Intent;
 import com.growthbeat.message.model.UrlIntent;
@@ -16,26 +15,19 @@ public class UrlIntentHandler implements IntentHandler {
 	}
 
 	@Override
-	public boolean handleIntent(Intent intent) {
+	public boolean handle(Intent intent) {
 
 		if (intent.getType() != Intent.Type.url)
 			return false;
 
 		UrlIntent urlIntent = (UrlIntent) intent;
 
-		boolean error = false;
-		try {
-			Uri uri = Uri.parse(urlIntent.getUrl());
-			android.content.Intent i = new android.content.Intent(android.content.Intent.ACTION_VIEW, uri);
-			i.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
-			context.startActivity(i);
-		} catch (Exception e) {
-			Log.e("exception", e.toString());
-			error = true;
-		} finally {
+		Uri uri = Uri.parse(urlIntent.getUrl());
+		android.content.Intent androidIntent = new android.content.Intent(android.content.Intent.ACTION_VIEW, uri);
+		androidIntent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(androidIntent);
 
-		}
-		return !error;
+		return true;
 
 	}
 
