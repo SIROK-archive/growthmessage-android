@@ -1,7 +1,8 @@
 package com.growthbeat.message;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
@@ -15,6 +16,7 @@ import com.growthbeat.Preference;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
 import com.growthbeat.message.handler.MessageHandler;
+import com.growthbeat.message.handler.PlainMassageHandler;
 import com.growthbeat.message.intenthandler.IntentHandler;
 import com.growthbeat.message.model.Button;
 import com.growthbeat.message.model.Intent;
@@ -34,9 +36,9 @@ public class GrowthMessage {
 	private String applicationId = null;
 	private String credentialId = null;
 
-	private ArrayList<MessageHandler> messageHandlers;
-	private ArrayList<IntentHandler> intentHandlers;
-	private GrowthMessageDelegate delegate;
+	private List<? extends MessageHandler> messageHandlers;
+	private List<? extends IntentHandler> intentHandlers;
+	private Callback callback;
 
 	private GrowthMessage() {
 		super();
@@ -54,6 +56,8 @@ public class GrowthMessage {
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
+		setMessageHandlers(Arrays.asList(new PlainMassageHandler(context)));
+
 	}
 
 	public void recevieMessage(final String eventId) {
@@ -63,43 +67,65 @@ public class GrowthMessage {
 			@Override
 			public void run() {
 
-				logger.info("Check message...");
+				logger.info("Receive message...");
 
 				try {
+
 					final Message message = Message.receive(GrowthbeatCore.getInstance().waitClient().getId(), eventId, credentialId);
-					logger.info(String.format("Message is found. (id: %s)", message.getId()));
+					logger.info(String.format("Message is received. (id: %s)", message.getId()));
+
 					handler.post(new Runnable() {
 						@Override
 						public void run() {
-							openMessage(message);
+							handleMessage(message);
 						}
 					});
 
 				} catch (GrowthbeatException e) {
 					logger.info(String.format("Message is not found.", e.getMessage()));
-				} catch (Exception e) {
-					logger.info(String.format("Message is not found.", e.getMessage()));
 				}
+
 			}
 
 		}).start();
+
 	}
 
-	public void openMessage(Message message) {
-		if (delegate.shouldShowMessage(message)) {
-			for (MessageHandler handler : messageHandlers) {
-				if (handler.handleMessage(message, this)) {
-					Map<String, String> properties = new HashMap<String, String>();
-					properties.put("taskId", message.getTask().getId());
-					properties.put("messageId", message.getId());
-					GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:ShowMessage", properties);
-				} else {
-					// not handled by the handler
-				}
-			}
-		} else {
-			logger.info("Message is found. (id: " + message.getId() + ")");
+	public void handleMessage(Message message) {
+
+		if (callback != null && !callback.shouldShowMessage(message)) {
+			logger.info("The display of message is suppressed.");
+			return;
 		}
+
+		for (MessageHandler messageHandler : messageHandlers) {
+			if (!messageHandler.handleMessage(message, this))
+				continue;
+			Map<String, String> properties = new HashMap<String, String>();
+			properties.put("taskId", message.getTask().getId());
+			properties.put("messageId", message.getId());
+			GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:ShowMessage", properties);
+			break;
+		}
+
+	}
+
+	public void didSelectButton(Button button, Message message) {
+
+		handleIntent(button.getIntent());
+
+		Map<String, String> properties = new HashMap<String, String>();
+		properties.put("taskId", message.getTask().getId());
+		properties.put("messageId", message.getId());
+		properties.put("intentId", button.getIntent().getId());
+		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
+
+	}
+
+	private void handleIntent(Intent intent) {
+		for (IntentHandler intentHandler : intentHandlers)
+			if (intentHandler.handleIntent(intent))
+				break;
 	}
 
 	public String getApplicationId() {
@@ -122,33 +148,22 @@ public class GrowthMessage {
 		return preference;
 	}
 
-	public void didSelectButton(Button button, Message message) {
-		handleIntent(button.getIntent());
-
-		Map<String, String> properties = new HashMap<String, String>();
-		properties.put("taskId", message.getTask().getId());
-		properties.put("messageId", message.getId());
-		properties.put("intentId", button.getIntent().getId());
-		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
-
-	}
-
-	private void handleIntent(Intent intent) {
-		for (IntentHandler handler : intentHandlers) {
-			handler.handleIntent(intent);
-		}
-	}
-
-	public void setMessageHandlers(ArrayList<MessageHandler> messageHandlers) {
+	public void setMessageHandlers(List<? extends MessageHandler> messageHandlers) {
 		this.messageHandlers = messageHandlers;
 	}
 
-	public void setIntentHandlers(ArrayList<IntentHandler> intentHandlers) {
+	public void setIntentHandlers(List<? extends IntentHandler> intentHandlers) {
 		this.intentHandlers = intentHandlers;
 	}
 
-	public void setDelegate(GrowthMessageDelegate delegate) {
-		this.delegate = delegate;
+	public void setCallback(Callback callback) {
+		this.callback = callback;
+	}
+
+	public interface Callback {
+
+		boolean shouldShowMessage(Message message);
+
 	}
 
 	private static class Thread extends CatchableThread {
