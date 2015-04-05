@@ -99,7 +99,7 @@ public class GrowthMessage {
 		}
 
 		for (MessageHandler messageHandler : messageHandlers) {
-			if (!messageHandler.handleMessage(message, this))
+			if (!messageHandler.handle(message))
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put("taskId", message.getTask().getId());

@@ -1,7 +1,5 @@
 package com.growthbeat.message.handler;
 
-import java.util.ArrayList;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,33 +19,35 @@ public class PlainMassageHandler implements MessageHandler {
 	}
 
 	@Override
-	public boolean handleMessage(final Message message, final GrowthMessage manager) {
+	public boolean handle(final Message message) {
 
 		if (message.getType() != Message.Type.plain)
 			return false;
 
 		final PlainMessage plainMessage = (PlainMessage) message;
 
-		ArrayList<String> labels = new ArrayList<String>();
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+		alertDialogBuilder.setTitle(plainMessage.getCaption());
+
+		TextView textView = new TextView(context);
+		textView.setText(plainMessage.getText());
+		alertDialogBuilder.setView(textView);
+
+		String[] labels = new String[plainMessage.getButtons().size()];
 		for (int i = 0; i < plainMessage.getButtons().size(); i++) {
 			PlainButton plainButton = (PlainButton) plainMessage.getButtons().get(i);
-			labels.add(plainButton.getLabel());
+			labels[i] = plainButton.getLabel();
 		}
-		final CharSequence[] labelsArray = (CharSequence[]) labels.toArray(new CharSequence[0]);
-
-		AlertDialog.Builder listDlg = new AlertDialog.Builder(context);
-
-		TextView text = new TextView(context);
-		text.setText(plainMessage.getText());
-		listDlg.setView(text);
-
-		listDlg.setTitle(plainMessage.getCaption());
-		listDlg.setItems(labelsArray, new DialogInterface.OnClickListener() {
+		alertDialogBuilder.setItems(labels, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int which) {
-				manager.didSelectButton(plainMessage.getButtons().get(which), plainMessage);
+				GrowthMessage.getInstance().didSelectButton(plainMessage.getButtons().get(which), message);
 			}
 		});
-		listDlg.create().show();
+
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+
 		return true;
 
 	}
