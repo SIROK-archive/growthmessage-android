@@ -1,16 +1,13 @@
 package com.growthbeat.message;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 
-import com.growthbeat.message.model.GMMessage;
+import com.growthbeat.analytics.GrowthAnalytics;
 
 public class MainActivity extends Activity {
-
-	private SharedPreferences sharedPreferences = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,35 +18,25 @@ public class MainActivity extends Activity {
 		GrowthMessage.getInstance().initialize(getApplicationContext(), "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
 		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
 
-		ArrayList<MessageHandler> messageHandlers;
-		messageHandlers = new ArrayList<MessageHandler>();
-		messageHandlers.add(new BasicMassageHandler(MainActivity.this));
-		GrowthMessage.getInstance().setMessageHandlers(messageHandlers);
-
-		ArrayList<IntentHandler> intentHandlers;
-		intentHandlers = new ArrayList<IntentHandler>();
-		intentHandlers.add(new OpenBrowserIntentHandler(MainActivity.this));
-		intentHandlers.add(new NopeIntentHandler());
-		GrowthMessage.getInstance().setIntentHandlers(intentHandlers);
-
-		GrowthMessageDelegate delegate = new GrowthMessageDelegate() {
+		findViewById(R.id.purchase_button).setOnClickListener(new OnClickListener() {
 			@Override
-			public boolean shouldShowMessage(GMMessage message) {
-				return true;
+			public void onClick(View v) {
+				GrowthAnalytics.getInstance().purchase(100, "item", "energy");
 			}
-		};
-		GrowthMessage.getInstance().setDelegate(delegate);
+		});
+
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		GrowthMessage.getInstance().openMessageIfAvailable();
+		GrowthAnalytics.getInstance().open();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
+		GrowthAnalytics.getInstance().close();
 	}
 
 }

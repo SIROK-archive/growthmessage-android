@@ -1,2 +1,2 @@
 eclipse.preferences.version=1
-encoding//src/com/growthbeat/message/BasicMassageHandler.java=UTF-8
+encoding//src/com/growthbeat/message/handler/PlainMassageHandler.java=UTF-8

@@ -26,6 +26,13 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="6587000" />
+
+        <activity
+            android:name="com.growthbeat.message.view.AlertActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleInstance"
+            android:theme="@android:style/Theme.Translucent" />
+        
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" >
