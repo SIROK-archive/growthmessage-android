@@ -37,6 +37,7 @@ public class AlertFragment extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				GrowthMessage.getInstance().didSelectButton(positiveButton, plainMessage);
+				getActivity().finish();
 			}
 		});
 
@@ -45,6 +46,7 @@ public class AlertFragment extends DialogFragment {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				GrowthMessage.getInstance().didSelectButton(negativeButton, plainMessage);
+				getActivity().finish();
 			}
 		});
 

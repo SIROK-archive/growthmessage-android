@@ -3,6 +3,6 @@
 
     <string name="app_name">GrowthMessage-sample</string>
     <string name="title">Growth Message</string>
-    <string name="item_button_text">Buy item.</string>
+    <string name="purchase_button_text">Send purchase event.</string>
 
 </resources>

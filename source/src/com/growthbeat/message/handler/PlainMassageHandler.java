@@ -22,7 +22,7 @@ public class PlainMassageHandler implements MessageHandler {
 
 		Intent intent = new Intent(context, AlertActivity.class);
 		intent.putExtra("message", message);
-		intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(intent);
 
 		return true;

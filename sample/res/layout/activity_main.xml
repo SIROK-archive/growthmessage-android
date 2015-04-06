@@ -8,10 +8,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.growthbeat.message.MainActivity" >
 
-    <TextView
-        android:id="@+id/text"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/title" />
+        android:layout_below="@+id/text"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title" />
+
+        <Button
+            android:id="@+id/purchase_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/purchase_button_text" />
+    </LinearLayout>
 
 </RelativeLayout>
