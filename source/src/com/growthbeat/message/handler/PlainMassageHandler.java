@@ -12,7 +12,7 @@ import com.growthbeat.message.model.PlainMessage;
 
 public class PlainMassageHandler implements MessageHandler {
 
-	Context context;
+	private Context context;
 
 	public PlainMassageHandler(Context context) {
 		this.context = context;

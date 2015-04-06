@@ -8,7 +8,7 @@ import com.growthbeat.message.model.UrlIntent;
 
 public class UrlIntentHandler implements IntentHandler {
 
-	Context context;
+	private Context context;
 
 	public UrlIntentHandler(Context context) {
 		this.context = context;

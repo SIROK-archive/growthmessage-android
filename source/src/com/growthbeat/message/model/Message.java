@@ -3,6 +3,7 @@ package com.growthbeat.message.model;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -25,7 +26,7 @@ public class Message extends Model {
 	private int cap;
 	private Date created;
 	private Task task;
-	private ArrayList<Button> buttons = new ArrayList<Button>();
+	private List<Button> buttons = new ArrayList<Button>();
 
 	protected Message() {
 		super();
@@ -135,11 +136,11 @@ public class Message extends Model {
 		this.task = task;
 	}
 
-	public ArrayList<Button> getButtons() {
+	public List<Button> getButtons() {
 		return buttons;
 	}
 
-	public void setButtons(ArrayList<Button> buttons) {
+	public void setButtons(List<Button> buttons) {
 		this.buttons = buttons;
 	}
 
@@ -198,9 +199,11 @@ public class Message extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "task"))
 				setTask(new Task(jsonObject.getJSONObject("task")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "buttons")) {
+				List<Button> buttons = new ArrayList<Button>();
 				JSONArray buttonJsonArray = jsonObject.getJSONArray("buttons");
 				for (int i = 0; i < buttonJsonArray.length(); i++)
 					buttons.add(Button.getFromJsonObject(buttonJsonArray.getJSONObject(i)));
+				setButtons(buttons);
 			}
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");
