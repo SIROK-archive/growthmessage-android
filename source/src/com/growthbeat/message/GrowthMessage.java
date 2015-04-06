@@ -13,6 +13,7 @@ import com.growthbeat.GrowthbeatCore;
 import com.growthbeat.GrowthbeatException;
 import com.growthbeat.Logger;
 import com.growthbeat.Preference;
+import com.growthbeat.analytics.EventHandler;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
 import com.growthbeat.message.handler.MessageHandler;
@@ -55,6 +56,15 @@ public class GrowthMessage {
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
+
+		GrowthAnalytics.getInstance().addEventHandler(new EventHandler() {
+			@Override
+			public void callback(String eventId, Map<String, String> properties) {
+				if (eventId != null && eventId.startsWith("Event:" + applicationId + ":GrowthMessage"))
+					return;
+				recevieMessage(eventId);
+			}
+		});
 
 		setMessageHandlers(Arrays.asList(new PlainMassageHandler(context)));
 
