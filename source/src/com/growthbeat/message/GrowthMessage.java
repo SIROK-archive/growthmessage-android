@@ -108,7 +108,7 @@ public class GrowthMessage {
 			Map<String, String> properties = new HashMap<String, String>();
 			properties.put("taskId", message.getTask().getId());
 			properties.put("messageId", message.getId());
-			GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:ShowMessage", properties);
+			GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:ShowMessage", properties);
 			break;
 		}
 
@@ -122,7 +122,7 @@ public class GrowthMessage {
 		properties.put("taskId", message.getTask().getId());
 		properties.put("messageId", message.getId());
 		properties.put("intentId", button.getIntent().getId());
-		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
+		GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:SelectButton", properties);
 
 	}
 
