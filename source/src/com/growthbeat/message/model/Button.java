@@ -5,6 +5,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.growthbeat.model.Intent;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;

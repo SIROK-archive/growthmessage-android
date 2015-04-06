@@ -1,14 +1,8 @@
 package com.growthbeat.message;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.os.Bundle;
 
-import com.growthbeat.message.intenthandler.IntentHandler;
-import com.growthbeat.message.intenthandler.NoopIntentHandler;
-import com.growthbeat.message.intenthandler.UrlIntentHandler;
 import com.growthbeat.message.model.Message;
 
 public class MainActivity extends Activity {
@@ -21,11 +15,6 @@ public class MainActivity extends Activity {
 
 		GrowthMessage.getInstance().initialize(getApplicationContext(), "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
 		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
-
-		List<IntentHandler> intentHandlers = new ArrayList<IntentHandler>();
-		intentHandlers.add(new UrlIntentHandler(getApplicationContext()));
-		intentHandlers.add(new NoopIntentHandler());
-		GrowthMessage.getInstance().setIntentHandlers(intentHandlers);
 
 		GrowthMessage.getInstance().setCallback(new GrowthMessage.Callback() {
 

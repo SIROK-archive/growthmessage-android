@@ -17,9 +17,7 @@ import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
 import com.growthbeat.message.handler.MessageHandler;
 import com.growthbeat.message.handler.PlainMassageHandler;
-import com.growthbeat.message.intenthandler.IntentHandler;
 import com.growthbeat.message.model.Button;
-import com.growthbeat.message.model.Intent;
 import com.growthbeat.message.model.Message;
 
 public class GrowthMessage {
@@ -38,7 +36,6 @@ public class GrowthMessage {
 	private String credentialId = null;
 
 	private List<? extends MessageHandler> messageHandlers;
-	private List<? extends IntentHandler> intentHandlers;
 	private Callback callback;
 
 	private GrowthMessage() {
@@ -115,7 +112,7 @@ public class GrowthMessage {
 
 	public void didSelectButton(Button button, Message message) {
 
-		handleIntent(button.getIntent());
+		GrowthbeatCore.getInstance().handleIntent(button.getIntent());
 
 		Map<String, String> properties = new HashMap<String, String>();
 		properties.put("taskId", message.getTask().getId());
@@ -123,12 +120,6 @@ public class GrowthMessage {
 		properties.put("intentId", button.getIntent().getId());
 		GrowthAnalytics.getInstance().track("Event:" + applicationId + "GrowthMessage:SelectButton", properties);
 
-	}
-
-	private void handleIntent(Intent intent) {
-		for (IntentHandler intentHandler : intentHandlers)
-			if (intentHandler.handle(intent))
-				break;
 	}
 
 	public Context getContext() {
@@ -157,10 +148,6 @@ public class GrowthMessage {
 
 	public void setMessageHandlers(List<? extends MessageHandler> messageHandlers) {
 		this.messageHandlers = messageHandlers;
-	}
-
-	public void setIntentHandlers(List<? extends IntentHandler> intentHandlers) {
-		this.intentHandlers = intentHandlers;
 	}
 
 	public void setCallback(Callback callback) {
