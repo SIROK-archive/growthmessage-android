@@ -16,11 +16,11 @@ public class Button extends Model {
 	private Message message;
 	private Intent intent;
 
-	public Button() {
+	protected Button() {
 		super();
 	}
 
-	public Button(JSONObject jsonObject) {
+	protected Button(JSONObject jsonObject) {
 		super(jsonObject);
 	}
 
@@ -72,6 +72,7 @@ public class Button extends Model {
 	public JSONObject getJsonObject() {
 
 		JSONObject jsonObject = new JSONObject();
+
 		try {
 			jsonObject.put("type", getType().toString());
 			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
@@ -97,12 +98,13 @@ public class Button extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "message"))
-				setMessage(new Message(jsonObject.getJSONObject("message")));
+				setMessage(Message.getFromJsonObject(jsonObject.getJSONObject("message")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
-				setIntent(new Intent(jsonObject.getJSONObject("intent")));
+				setIntent(Intent.getFromJsonObject(jsonObject.getJSONObject("intent")));
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");
 		}
+
 	}
 
 	public static enum Type {

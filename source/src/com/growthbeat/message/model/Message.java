@@ -27,11 +27,11 @@ public class Message extends Model {
 	private Task task;
 	private ArrayList<Button> buttons = new ArrayList<Button>();
 
-	public Message() {
+	protected Message() {
 		super();
 	}
 
-	public Message(JSONObject jsonObject) {
+	protected Message(JSONObject jsonObject) {
 		super(jsonObject);
 	}
 
@@ -59,8 +59,7 @@ public class Message extends Model {
 
 		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().post("/1/receive", params);
 
-		// TODO Determine message type
-		return new PlainMessage(jsonObject);
+		return Message.getFromJsonObject(jsonObject);
 
 	}
 
@@ -148,6 +147,7 @@ public class Message extends Model {
 	public JSONObject getJsonObject() {
 
 		JSONObject jsonObject = new JSONObject();
+
 		try {
 			jsonObject.put("id", getId());
 			jsonObject.put("version", getVersion());
@@ -157,17 +157,19 @@ public class Message extends Model {
 			jsonObject.put("segmentId", getSegmentId());
 			jsonObject.put("cap", getCap());
 			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("task", task.getJsonObject());
-			JSONArray array = new JSONArray();
+			jsonObject.put("task", task != null ? task.getJsonObject() : null);
+			JSONArray buttonJsonArray = new JSONArray();
 			for (Button button : buttons) {
 				JSONObject buttonJson = button.getJsonObject();
-				array.put(buttonJson);
+				buttonJsonArray.put(buttonJson);
 			}
-			jsonObject.put("buttons", array);
+			jsonObject.put("buttons", buttonJsonArray);
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
+
 		return jsonObject;
+
 	}
 
 	@Override
@@ -193,19 +195,12 @@ public class Message extends Model {
 				setCap(jsonObject.getInt("cap"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
-			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "task")) {
-				Task task = new Task();
-				task.setJsonObject(jsonObject.getJSONObject("task"));
-				setTask(task);
-			}
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "task"))
+				setTask(new Task(jsonObject.getJSONObject("task")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "buttons")) {
-				JSONArray array = jsonObject.getJSONArray("buttons");
-				for (int i = 0; i < array.length(); i++) {
-					JSONObject jsonButton = array.getJSONObject(i);
-					Button button = new Button();
-					button.setJsonObject(jsonButton);
-					buttons.add(button);
-				}
+				JSONArray buttonJsonArray = jsonObject.getJSONArray("buttons");
+				for (int i = 0; i < buttonJsonArray.length(); i++)
+					buttons.add(Button.getFromJsonObject(buttonJsonArray.getJSONObject(i)));
 			}
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to parse JSON.");

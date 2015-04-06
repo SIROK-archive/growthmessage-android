@@ -30,12 +30,14 @@ public class UrlIntent extends Intent {
 	@Override
 	public JSONObject getJsonObject() {
 
-		JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject = super.getJsonObject();
+
 		try {
 			jsonObject.put("url", getUrl());
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
+
 		return jsonObject;
 	}
 
@@ -44,6 +46,8 @@ public class UrlIntent extends Intent {
 
 		if (jsonObject == null)
 			return;
+
+		super.setJsonObject(jsonObject);
 
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "url"))

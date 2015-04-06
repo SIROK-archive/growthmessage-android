@@ -103,7 +103,9 @@ public class Task extends Model {
 
 	@Override
 	public JSONObject getJsonObject() {
+
 		JSONObject jsonObject = new JSONObject();
+
 		try {
 			jsonObject.put("id", getId());
 			jsonObject.put("applicationId", getApplicationId());
@@ -117,11 +119,14 @@ public class Task extends Model {
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
+
 		return jsonObject;
+
 	}
 
 	@Override
 	public void setJsonObject(JSONObject jsonObject) {
+
 		if (jsonObject == null)
 			return;
 

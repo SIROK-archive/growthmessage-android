@@ -34,7 +34,7 @@ public class CustomIntent extends Intent {
 	@Override
 	public JSONObject getJsonObject() {
 
-		JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject = super.getJsonObject();
 		try {
 			JSONObject extraJsonObject = new JSONObject();
 			for (Map.Entry<String, String> entry : extra.entrySet())
@@ -51,6 +51,8 @@ public class CustomIntent extends Intent {
 
 		if (jsonObject == null)
 			return;
+
+		super.setJsonObject(jsonObject);
 
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "extra")) {

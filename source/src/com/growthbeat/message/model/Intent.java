@@ -17,11 +17,11 @@ public class Intent extends Model {
 	private Type type;
 	private Date created;
 
-	public Intent() {
+	protected Intent() {
 		super();
 	}
 
-	public Intent(JSONObject jsonObject) {
+	protected Intent(JSONObject jsonObject) {
 		super(jsonObject);
 	}
 

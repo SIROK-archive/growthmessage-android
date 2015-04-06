@@ -9,11 +9,11 @@ public class PlainButton extends Button {
 
 	private String label;
 
-	public PlainButton() {
+	protected PlainButton() {
 		super();
 	}
 
-	public PlainButton(JSONObject jsonObject) {
+	protected PlainButton(JSONObject jsonObject) {
 		super(jsonObject);
 	}
 
@@ -28,13 +28,16 @@ public class PlainButton extends Button {
 	@Override
 	public JSONObject getJsonObject() {
 
-		JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject = super.getJsonObject();
+
 		try {
 			jsonObject.put("label", getLabel());
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
+
 		return jsonObject;
+
 	}
 
 	@Override
@@ -42,6 +45,8 @@ public class PlainButton extends Button {
 
 		if (jsonObject == null)
 			return;
+
+		super.setJsonObject(jsonObject);
 
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "label"))

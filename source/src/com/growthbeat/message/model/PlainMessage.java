@@ -37,14 +37,17 @@ public class PlainMessage extends Message {
 	@Override
 	public JSONObject getJsonObject() {
 
-		JSONObject jsonObject = new JSONObject();
+		JSONObject jsonObject = super.getJsonObject();
+
 		try {
 			jsonObject.put("caption", getCaption());
 			jsonObject.put("text", getText());
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
+
 		return jsonObject;
+
 	}
 
 	@Override
@@ -52,6 +55,8 @@ public class PlainMessage extends Message {
 
 		if (jsonObject == null)
 			return;
+
+		super.setJsonObject(jsonObject);
 
 		try {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "caption"))
