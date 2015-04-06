@@ -10,12 +10,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.growthbeat.GrowthbeatException;
 import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.model.Model;
 import com.growthbeat.utils.DateUtils;
 import com.growthbeat.utils.JSONObjectUtils;
 
-public class Message extends Model {
+public class Message extends Model implements Parcelable {
 
 	private String id;
 	private int version;
@@ -214,5 +218,38 @@ public class Message extends Model {
 	public static enum Type {
 		plain
 	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(getJsonObject().toString());
+	}
+
+	public static final Parcelable.Creator<Message> CREATOR = new Creator<Message>() {
+
+		@Override
+		public Message[] newArray(int size) {
+			return new Message[size];
+		}
+
+		@Override
+		public Message createFromParcel(Parcel source) {
+
+			JSONObject jsonObject = null;
+
+			try {
+				jsonObject = new JSONObject(source.readString());
+			} catch (JSONException e) {
+				throw new GrowthbeatException("Failed to parse JSON. " + e.getMessage(), e);
+			}
+
+			return Message.getFromJsonObject(jsonObject);
+
+		}
+	};
 
 }

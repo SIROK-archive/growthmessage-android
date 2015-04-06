@@ -33,6 +33,7 @@ public class GrowthMessage {
 	private final GrowthbeatHttpClient httpClient = new GrowthbeatHttpClient(HTTP_CLIENT_DEFAULT_BASE_URL);
 	private final Preference preference = new Preference(PREFERENCE_DEFAULT_FILE_NAME);
 
+	private Context context = null;
 	private String applicationId = null;
 	private String credentialId = null;
 
@@ -52,6 +53,7 @@ public class GrowthMessage {
 
 		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
 
+		this.context = context.getApplicationContext();
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
@@ -126,6 +128,10 @@ public class GrowthMessage {
 		for (IntentHandler intentHandler : intentHandlers)
 			if (intentHandler.handle(intent))
 				break;
+	}
+
+	public Context getContext() {
+		return context;
 	}
 
 	public String getApplicationId() {
