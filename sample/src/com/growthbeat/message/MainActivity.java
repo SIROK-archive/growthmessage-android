@@ -1,16 +1,17 @@
 package com.growthbeat.message;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 
-import com.growthbeat.message.model.GMMessage;
+import com.growthbeat.message.intenthandler.IntentHandler;
+import com.growthbeat.message.intenthandler.NoopIntentHandler;
+import com.growthbeat.message.intenthandler.UrlIntentHandler;
+import com.growthbeat.message.model.Message;
 
 public class MainActivity extends Activity {
-
-	private SharedPreferences sharedPreferences = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -21,30 +22,24 @@ public class MainActivity extends Activity {
 		GrowthMessage.getInstance().initialize(getApplicationContext(), "P5C3vzoLOEijnlVj", "btFlFAitBJ1CBdL3IR3ROnhLYbeqmLlY");
 		GrowthMessage.getInstance().getHttpClient().setBaseUrl("http://api.stg.message.growthbeat.com/");
 
-		ArrayList<MessageHandler> messageHandlers;
-		messageHandlers = new ArrayList<MessageHandler>();
-		messageHandlers.add(new BasicMassageHandler(MainActivity.this));
-		GrowthMessage.getInstance().setMessageHandlers(messageHandlers);
-
-		ArrayList<IntentHandler> intentHandlers;
-		intentHandlers = new ArrayList<IntentHandler>();
-		intentHandlers.add(new OpenBrowserIntentHandler(MainActivity.this));
-		intentHandlers.add(new NopeIntentHandler());
+		List<IntentHandler> intentHandlers = new ArrayList<IntentHandler>();
+		intentHandlers.add(new UrlIntentHandler(getApplicationContext()));
+		intentHandlers.add(new NoopIntentHandler());
 		GrowthMessage.getInstance().setIntentHandlers(intentHandlers);
 
-		GrowthMessageDelegate delegate = new GrowthMessageDelegate() {
+		GrowthMessage.getInstance().setCallback(new GrowthMessage.Callback() {
+
 			@Override
-			public boolean shouldShowMessage(GMMessage message) {
+			public boolean shouldShowMessage(Message message) {
 				return true;
 			}
-		};
-		GrowthMessage.getInstance().setDelegate(delegate);
+		});
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		GrowthMessage.getInstance().openMessageIfAvailable();
+		GrowthMessage.getInstance().recevieMessage("Event:P5C3vzoLOEijnlVj:Default:Open");
 	}
 
 	@Override
