@@ -107,15 +107,23 @@ public class Task extends Model {
 		JSONObject jsonObject = new JSONObject();
 
 		try {
-			jsonObject.put("id", getId());
-			jsonObject.put("applicationId", getApplicationId());
-			jsonObject.put("name", getName());
-			jsonObject.put("description", getDescription());
-			jsonObject.put("availableFrom", DateUtils.formatToDateTimeString(availableFrom));
-			jsonObject.put("availableTo", DateUtils.formatToDateTimeString(availableTo));
+			if (id != null)
+				jsonObject.put("id", id);
+			if (applicationId != null)
+				jsonObject.put("applicationId", applicationId);
+			if (name != null)
+				jsonObject.put("name", name);
+			if (description != null)
+				jsonObject.put("description", description);
+			if (availableFrom != null)
+				jsonObject.put("availableFrom", DateUtils.formatToDateTimeString(availableFrom));
+			if (availableTo != null)
+				jsonObject.put("availableTo", DateUtils.formatToDateTimeString(availableTo));
 			jsonObject.put("disabled", getDisabled());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("updated", DateUtils.formatToDateTimeString(updated));
+			if (created != null)
+				jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			if (updated != null)
+				jsonObject.put("updated", DateUtils.formatToDateTimeString(updated));
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
@@ -150,7 +158,7 @@ public class Task extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "updated"))
 				setUpdated(DateUtils.parseFromDateTimeString(jsonObject.getString("updated")));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

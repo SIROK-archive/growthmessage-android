@@ -74,12 +74,16 @@ public class Button extends Model {
 		JSONObject jsonObject = new JSONObject();
 
 		try {
-			jsonObject.put("type", getType().toString());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("message", getMessage());
-			jsonObject.put("intent", getIntent());
+			if (type != null)
+				jsonObject.put("type", type.toString());
+			if (created != null)
+				jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			if (message != null)
+				jsonObject.put("message", message.getJsonObject());
+			if (intent != null)
+				jsonObject.put("intent", intent.getJsonObject());
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to get JSON.");
+			throw new IllegalArgumentException("Failed to get JSON.", e);
 		}
 
 		return jsonObject;
@@ -102,7 +106,7 @@ public class Button extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "intent"))
 				setIntent(Intent.getFromJsonObject(jsonObject.getJSONObject("intent")));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

@@ -36,10 +36,12 @@ public class CustomIntent extends Intent {
 
 		JSONObject jsonObject = super.getJsonObject();
 		try {
-			JSONObject extraJsonObject = new JSONObject();
-			for (Map.Entry<String, String> entry : extra.entrySet())
-				extraJsonObject.put(entry.getKey(), entry.getValue());
-			jsonObject.put("extra", extraJsonObject);
+			if (extra != null) {
+				JSONObject extraJsonObject = new JSONObject();
+				for (Map.Entry<String, String> entry : extra.entrySet())
+					extraJsonObject.put(entry.getKey(), entry.getValue());
+				jsonObject.put("extra", extraJsonObject);
+			}
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
@@ -67,7 +69,7 @@ public class CustomIntent extends Intent {
 				setExtra(map);
 			}
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

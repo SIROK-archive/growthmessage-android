@@ -30,7 +30,7 @@ public class Message extends Model implements Parcelable {
 	private int cap;
 	private Date created;
 	private Task task;
-	private List<Button> buttons = new ArrayList<Button>();
+	private List<Button> buttons;
 
 	protected Message() {
 		super();
@@ -154,23 +154,29 @@ public class Message extends Model implements Parcelable {
 		JSONObject jsonObject = new JSONObject();
 
 		try {
-			jsonObject.put("id", getId());
-			jsonObject.put("version", getVersion());
-			jsonObject.put("type", getType().toString());
-			jsonObject.put("eventId", getEventId());
-			jsonObject.put("frequency", getFrequency());
-			jsonObject.put("segmentId", getSegmentId());
-			jsonObject.put("cap", getCap());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
-			jsonObject.put("task", task != null ? task.getJsonObject() : null);
-			JSONArray buttonJsonArray = new JSONArray();
-			for (Button button : buttons) {
-				JSONObject buttonJson = button.getJsonObject();
-				buttonJsonArray.put(buttonJson);
+			if (id != null)
+				jsonObject.put("id", id);
+			jsonObject.put("version", version);
+			if (type != null)
+				jsonObject.put("type", type.toString());
+			if (eventId != null)
+				jsonObject.put("eventId", eventId);
+			jsonObject.put("frequency", frequency);
+			if (segmentId != null)
+				jsonObject.put("segmentId", segmentId);
+			jsonObject.put("cap", cap);
+			if (created != null)
+				jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			if (task != null)
+				jsonObject.put("task", task.getJsonObject());
+			if (buttons != null) {
+				JSONArray buttonJsonArray = new JSONArray();
+				for (Button button : buttons)
+					buttonJsonArray.put(button.getJsonObject());
+				jsonObject.put("buttons", buttonJsonArray);
 			}
-			jsonObject.put("buttons", buttonJsonArray);
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to get JSON.");
+			throw new IllegalArgumentException("Failed to get JSON.", e);
 		}
 
 		return jsonObject;
@@ -210,7 +216,7 @@ public class Message extends Model implements Parcelable {
 				setButtons(buttons);
 			}
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

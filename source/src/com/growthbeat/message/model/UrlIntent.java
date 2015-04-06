@@ -33,7 +33,8 @@ public class UrlIntent extends Intent {
 		JSONObject jsonObject = super.getJsonObject();
 
 		try {
-			jsonObject.put("url", getUrl());
+			if (url != null)
+				jsonObject.put("url", url);
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
@@ -53,7 +54,7 @@ public class UrlIntent extends Intent {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "url"))
 				setUrl(jsonObject.getString("url"));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

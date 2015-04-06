@@ -40,8 +40,10 @@ public class PlainMessage extends Message {
 		JSONObject jsonObject = super.getJsonObject();
 
 		try {
-			jsonObject.put("caption", getCaption());
-			jsonObject.put("text", getText());
+			if (caption != null)
+				jsonObject.put("caption", caption);
+			if (text != null)
+				jsonObject.put("text", text);
 		} catch (JSONException e) {
 			throw new IllegalArgumentException("Failed to get JSON.");
 		}
@@ -64,7 +66,7 @@ public class PlainMessage extends Message {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "text"))
 				setText(jsonObject.getString("text"));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

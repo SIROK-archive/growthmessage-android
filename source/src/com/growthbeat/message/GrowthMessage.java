@@ -52,6 +52,7 @@ public class GrowthMessage {
 	public void initialize(final Context context, final String applicationId, final String credentialId) {
 
 		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
+		GrowthAnalytics.getInstance().initialize(context, applicationId, credentialId);
 
 		this.context = context.getApplicationContext();
 		this.applicationId = applicationId;

@@ -86,13 +86,18 @@ public class Intent extends Model {
 
 		JSONObject jsonObject = new JSONObject();
 		try {
-			jsonObject.put("id", getId());
-			jsonObject.put("applicationId", getApplicationId());
-			jsonObject.put("name", getName());
-			jsonObject.put("type", getType().toString());
-			jsonObject.put("created", DateUtils.formatToDateTimeString(created));
+			if (id != null)
+				jsonObject.put("id", id);
+			if (applicationId != null)
+				jsonObject.put("applicationId", applicationId);
+			if (name != null)
+				jsonObject.put("name", name);
+			if (type != null)
+				jsonObject.put("type", type.toString());
+			if (created != null)
+				jsonObject.put("created", DateUtils.formatToDateTimeString(created));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to get JSON.");
+			throw new IllegalArgumentException("Failed to get JSON.", e);
 		}
 		return jsonObject;
 	}
@@ -115,7 +120,7 @@ public class Intent extends Model {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}

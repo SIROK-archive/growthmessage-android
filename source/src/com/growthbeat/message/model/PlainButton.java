@@ -52,7 +52,7 @@ public class PlainButton extends Button {
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "label"))
 				setLabel(jsonObject.getString("label"));
 		} catch (JSONException e) {
-			throw new IllegalArgumentException("Failed to parse JSON.");
+			throw new IllegalArgumentException("Failed to parse JSON.", e);
 		}
 
 	}
