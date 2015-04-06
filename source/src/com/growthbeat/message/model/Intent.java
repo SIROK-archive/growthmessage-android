@@ -25,6 +25,22 @@ public class Intent extends Model {
 		super(jsonObject);
 	}
 
+	public static Intent getFromJsonObject(JSONObject jsonObject) {
+
+		Intent intent = new Intent(jsonObject);
+		switch (intent.getType()) {
+		case custom:
+			return new CustomIntent(jsonObject);
+		case noop:
+			return new NoopIntent(jsonObject);
+		case url:
+			return new UrlIntent(jsonObject);
+		default:
+			return null;
+		}
+
+	}
+
 	public String getId() {
 		return id;
 	}

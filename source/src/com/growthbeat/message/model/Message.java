@@ -35,6 +35,18 @@ public class Message extends Model {
 		super(jsonObject);
 	}
 
+	public static Message getFromJsonObject(JSONObject jsonObject) {
+
+		Message message = new Message(jsonObject);
+		switch (message.getType()) {
+		case plain:
+			return new PlainMessage(jsonObject);
+		default:
+			return null;
+		}
+
+	}
+
 	public static Message receive(String clientId, String eventId, String credentialId) {
 
 		Map<String, Object> params = new HashMap<String, Object>();

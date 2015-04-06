@@ -24,6 +24,18 @@ public class Button extends Model {
 		super(jsonObject);
 	}
 
+	public static Button getFromJsonObject(JSONObject jsonObject) {
+
+		Button button = new Button(jsonObject);
+		switch (button.getType()) {
+		case plain:
+			return new PlainButton(jsonObject);
+		default:
+			return null;
+		}
+
+	}
+
 	public Type getType() {
 		return type;
 	}
