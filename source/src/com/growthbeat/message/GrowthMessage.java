@@ -37,7 +37,6 @@ public class GrowthMessage {
 	private String credentialId = null;
 
 	private List<? extends MessageHandler> messageHandlers;
-	private Callback callback;
 
 	private GrowthMessage() {
 		super();
@@ -103,11 +102,6 @@ public class GrowthMessage {
 
 	public void handleMessage(Message message) {
 
-		if (callback != null && !callback.shouldShowMessage(message)) {
-			logger.info("The display of message is suppressed.");
-			return;
-		}
-
 		for (MessageHandler messageHandler : messageHandlers) {
 			if (!messageHandler.handle(message))
 				continue;
@@ -158,16 +152,6 @@ public class GrowthMessage {
 
 	public void setMessageHandlers(List<? extends MessageHandler> messageHandlers) {
 		this.messageHandlers = messageHandlers;
-	}
-
-	public void setCallback(Callback callback) {
-		this.callback = callback;
-	}
-
-	public interface Callback {
-
-		boolean shouldShowMessage(Message message);
-
 	}
 
 	private static class Thread extends CatchableThread {
