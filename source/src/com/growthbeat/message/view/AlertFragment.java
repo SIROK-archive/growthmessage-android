@@ -7,7 +7,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.widget.TextView;
 
 import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.PlainButton;
@@ -31,19 +30,21 @@ public class AlertFragment extends DialogFragment {
 		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
 
 		dialogBuilder.setTitle(plainMessage.getCaption());
+		dialogBuilder.setMessage(plainMessage.getText());
 
-		TextView textView = new TextView(getActivity());
-		textView.setText(plainMessage.getText());
-		dialogBuilder.setView(textView);
-
-		String[] labels = new String[plainMessage.getButtons().size()];
-		for (int i = 0; i < plainMessage.getButtons().size(); i++) {
-			PlainButton plainButton = (PlainButton) plainMessage.getButtons().get(i);
-			labels[i] = plainButton.getLabel();
-		}
-		dialogBuilder.setItems(labels, new DialogInterface.OnClickListener() {
+		final PlainButton positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+		dialogBuilder.setPositiveButton(positiveButton.getLabel(), new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				GrowthMessage.getInstance().didSelectButton(plainMessage.getButtons().get(which), plainMessage);
+				GrowthMessage.getInstance().didSelectButton(positiveButton, plainMessage);
+			}
+		});
+
+		final PlainButton negativeButton = (PlainButton) plainMessage.getButtons().get(1);
+		dialogBuilder.setNegativeButton(negativeButton.getLabel(), new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				GrowthMessage.getInstance().didSelectButton(negativeButton, plainMessage);
 			}
 		});
 
@@ -54,5 +55,4 @@ public class AlertFragment extends DialogFragment {
 		return dialog;
 
 	}
-
 }
