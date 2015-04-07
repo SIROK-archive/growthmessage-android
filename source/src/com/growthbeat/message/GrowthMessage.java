@@ -100,7 +100,7 @@ public class GrowthMessage {
 
 	}
 
-	public void handleMessage(Message message) {
+	private void handleMessage(Message message) {
 
 		for (MessageHandler messageHandler : messageHandlers) {
 			if (!messageHandler.handle(message))
@@ -114,7 +114,7 @@ public class GrowthMessage {
 
 	}
 
-	public void didSelectButton(Button button, Message message) {
+	public void selectButton(Button button, Message message) {
 
 		GrowthbeatCore.getInstance().handleIntent(button.getIntent());
 

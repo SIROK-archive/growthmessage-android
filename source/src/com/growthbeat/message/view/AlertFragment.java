@@ -36,7 +36,7 @@ public class AlertFragment extends DialogFragment {
 		dialogBuilder.setPositiveButton(positiveButton.getLabel(), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				GrowthMessage.getInstance().didSelectButton(positiveButton, plainMessage);
+				GrowthMessage.getInstance().selectButton(positiveButton, plainMessage);
 				getActivity().finish();
 			}
 		});
@@ -45,7 +45,7 @@ public class AlertFragment extends DialogFragment {
 		dialogBuilder.setNegativeButton(negativeButton.getLabel(), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				GrowthMessage.getInstance().didSelectButton(negativeButton, plainMessage);
+				GrowthMessage.getInstance().selectButton(negativeButton, plainMessage);
 				getActivity().finish();
 			}
 		});
