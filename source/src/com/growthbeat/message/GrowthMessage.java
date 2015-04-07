@@ -36,6 +36,7 @@ public class GrowthMessage {
 	private String applicationId = null;
 	private String credentialId = null;
 
+	private boolean initialized = false;
 	private List<? extends MessageHandler> messageHandlers;
 
 	private GrowthMessage() {
@@ -48,14 +49,18 @@ public class GrowthMessage {
 
 	public void initialize(final Context context, final String applicationId, final String credentialId) {
 
-		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
-		GrowthAnalytics.getInstance().initialize(context, applicationId, credentialId);
+		if (initialized)
+			return;
+		initialized = true;
 
 		this.context = context.getApplicationContext();
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
+
+		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
+		GrowthAnalytics.getInstance().initialize(context, applicationId, credentialId);
 		GrowthAnalytics.getInstance().addEventHandler(new EventHandler() {
 			@Override
 			public void callback(String eventId, Map<String, String> properties) {
