@@ -53,6 +53,11 @@ public class GrowthMessage {
 			return;
 		initialized = true;
 
+		if (context == null) {
+			logger.warning("The context parameter cannot be null.");
+			return;
+		}
+
 		this.context = context.getApplicationContext();
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
@@ -86,6 +91,11 @@ public class GrowthMessage {
 				try {
 
 					final Message message = Message.receive(GrowthbeatCore.getInstance().waitClient().getId(), eventId, credentialId);
+					if (message == null) {
+						logger.warning("Message response is null.");
+						return;
+					}
+
 					logger.info(String.format("Message is received. (id: %s)", message.getId()));
 
 					handler.post(new Runnable() {
@@ -111,8 +121,10 @@ public class GrowthMessage {
 			if (!messageHandler.handle(message))
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
-			properties.put("taskId", message.getTask().getId());
-			properties.put("messageId", message.getId());
+			if (message != null && message.getTask() != null)
+				properties.put("taskId", message.getTask().getId());
+			if (message != null)
+				properties.put("messageId", message.getId());
 			GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:ShowMessage", properties);
 			break;
 		}
@@ -124,9 +136,12 @@ public class GrowthMessage {
 		GrowthbeatCore.getInstance().handleIntent(button.getIntent());
 
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put("taskId", message.getTask().getId());
-		properties.put("messageId", message.getId());
-		properties.put("intentId", button.getIntent().getId());
+		if (message != null && message.getTask() != null)
+			properties.put("taskId", message.getTask().getId());
+		if (message != null)
+			properties.put("messageId", message.getId());
+		if (button != null && button.getIntent() != null)
+			properties.put("intentId", button.getIntent().getId());
 		GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:SelectButton", properties);
 
 	}
