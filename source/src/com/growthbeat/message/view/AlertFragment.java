@@ -22,6 +22,8 @@ public class AlertFragment extends DialogFragment {
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		Object message = getArguments().get("message");
+		if (message == null)
+			return null;
 		if (!(message instanceof PlainMessage))
 			return null;
 
@@ -32,23 +34,29 @@ public class AlertFragment extends DialogFragment {
 		dialogBuilder.setTitle(plainMessage.getCaption());
 		dialogBuilder.setMessage(plainMessage.getText());
 
-		final PlainButton positiveButton = (PlainButton) plainMessage.getButtons().get(0);
-		dialogBuilder.setPositiveButton(positiveButton.getLabel(), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				GrowthMessage.getInstance().selectButton(positiveButton, plainMessage);
-				getActivity().finish();
-			}
-		});
+		if (plainMessage.getButtons() != null && plainMessage.getButtons().size() >= 2) {
 
-		final PlainButton negativeButton = (PlainButton) plainMessage.getButtons().get(1);
-		dialogBuilder.setNegativeButton(negativeButton.getLabel(), new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				GrowthMessage.getInstance().selectButton(negativeButton, plainMessage);
-				getActivity().finish();
-			}
-		});
+			final PlainButton positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+			dialogBuilder.setPositiveButton(positiveButton.getLabel(), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					GrowthMessage.getInstance().selectButton(positiveButton, plainMessage);
+					if (!getActivity().isFinishing())
+						getActivity().finish();
+				}
+			});
+
+			final PlainButton negativeButton = (PlainButton) plainMessage.getButtons().get(1);
+			dialogBuilder.setNegativeButton(negativeButton.getLabel(), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					GrowthMessage.getInstance().selectButton(negativeButton, plainMessage);
+					if (!getActivity().isFinishing())
+						getActivity().finish();
+				}
+			});
+
+		}
 
 		AlertDialog dialog = dialogBuilder.create();
 		dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
