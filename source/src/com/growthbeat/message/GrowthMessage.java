@@ -36,6 +36,7 @@ public class GrowthMessage {
 	private String applicationId = null;
 	private String credentialId = null;
 
+	private boolean initialized = false;
 	private List<? extends MessageHandler> messageHandlers;
 
 	private GrowthMessage() {
@@ -48,14 +49,23 @@ public class GrowthMessage {
 
 	public void initialize(final Context context, final String applicationId, final String credentialId) {
 
-		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
-		GrowthAnalytics.getInstance().initialize(context, applicationId, credentialId);
+		if (initialized)
+			return;
+		initialized = true;
+
+		if (context == null) {
+			logger.warning("The context parameter cannot be null.");
+			return;
+		}
 
 		this.context = context.getApplicationContext();
 		this.applicationId = applicationId;
 		this.credentialId = credentialId;
+
+		GrowthbeatCore.getInstance().initialize(context, applicationId, credentialId);
 		this.preference.setContext(GrowthbeatCore.getInstance().getContext());
 
+		GrowthAnalytics.getInstance().initialize(context, applicationId, credentialId);
 		GrowthAnalytics.getInstance().addEventHandler(new EventHandler() {
 			@Override
 			public void callback(String eventId, Map<String, String> properties) {
@@ -81,6 +91,11 @@ public class GrowthMessage {
 				try {
 
 					final Message message = Message.receive(GrowthbeatCore.getInstance().waitClient().getId(), eventId, credentialId);
+					if (message == null) {
+						logger.warning("Message response is null.");
+						return;
+					}
+
 					logger.info(String.format("Message is received. (id: %s)", message.getId()));
 
 					handler.post(new Runnable() {
@@ -100,28 +115,33 @@ public class GrowthMessage {
 
 	}
 
-	public void handleMessage(Message message) {
+	private void handleMessage(Message message) {
 
 		for (MessageHandler messageHandler : messageHandlers) {
 			if (!messageHandler.handle(message))
 				continue;
 			Map<String, String> properties = new HashMap<String, String>();
-			properties.put("taskId", message.getTask().getId());
-			properties.put("messageId", message.getId());
+			if (message != null && message.getTask() != null)
+				properties.put("taskId", message.getTask().getId());
+			if (message != null)
+				properties.put("messageId", message.getId());
 			GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:ShowMessage", properties);
 			break;
 		}
 
 	}
 
-	public void didSelectButton(Button button, Message message) {
+	public void selectButton(Button button, Message message) {
 
 		GrowthbeatCore.getInstance().handleIntent(button.getIntent());
 
 		Map<String, String> properties = new HashMap<String, String>();
-		properties.put("taskId", message.getTask().getId());
-		properties.put("messageId", message.getId());
-		properties.put("intentId", button.getIntent().getId());
+		if (message != null && message.getTask() != null)
+			properties.put("taskId", message.getTask().getId());
+		if (message != null)
+			properties.put("messageId", message.getId());
+		if (button != null && button.getIntent() != null)
+			properties.put("intentId", button.getIntent().getId());
 		GrowthAnalytics.getInstance().track("Event:" + applicationId + ":GrowthMessage:SelectButton", properties);
 
 	}

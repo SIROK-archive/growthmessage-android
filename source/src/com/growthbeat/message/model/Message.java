@@ -63,6 +63,8 @@ public class Message extends Model implements Parcelable {
 			params.put("credentialId", credentialId);
 
 		JSONObject jsonObject = GrowthMessage.getInstance().getHttpClient().post("/1/receive", params);
+		if (jsonObject == null)
+			return null;
 
 		return Message.getFromJsonObject(jsonObject);
 

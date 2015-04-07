@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
-import android.view.WindowManager;
 
 public class AlertActivity extends FragmentActivity {
 
@@ -29,11 +28,7 @@ public class AlertActivity extends FragmentActivity {
 
 	@Override
 	public void onDestroy() {
-
-		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-
 		super.onDestroy();
-
 	}
 
 }
