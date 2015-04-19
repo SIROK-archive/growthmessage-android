@@ -31,6 +31,12 @@ public class Button extends Model {
 		switch (button.getType()) {
 		case plain:
 			return new PlainButton(jsonObject);
+		case image:
+			return new ImageButton(jsonObject);
+		case close:
+			return new CloseButton(jsonObject);
+		case screen:
+			return new ScreenButton(jsonObject);
 		default:
 			return null;
 		}
@@ -113,7 +119,7 @@ public class Button extends Model {
 	}
 
 	public static enum Type {
-		plain
+		plain, image, close, screen
 	}
 
 }
