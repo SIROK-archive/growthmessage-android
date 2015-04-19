@@ -46,6 +46,8 @@ public class Message extends Model implements Parcelable {
 		switch (message.getType()) {
 		case plain:
 			return new PlainMessage(jsonObject);
+		case image:
+			return new ImageMessage(jsonObject);
 		default:
 			return null;
 		}
@@ -224,7 +226,7 @@ public class Message extends Model implements Parcelable {
 	}
 
 	public static enum Type {
-		plain
+		plain, image
 	}
 
 	@Override
