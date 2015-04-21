@@ -5,6 +5,8 @@ import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 
+import com.growthbeat.message.model.Message;
+
 public class AlertActivity extends FragmentActivity {
 
 	@Override
@@ -15,14 +17,25 @@ public class AlertActivity extends FragmentActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setTheme(android.R.style.Theme_Translucent);
 
-		final AlertFragment fragment = new AlertFragment();
-		fragment.setCancelable(false);
-
+		Message message = (Message) getIntent().getExtras().get("message");
 		Bundle bundle = new Bundle();
-		bundle.putParcelable("message", (Parcelable) getIntent().getExtras().get("message"));
-		fragment.setArguments(bundle);
+		bundle.putParcelable("message", (Parcelable) message);
 
-		fragment.show(getSupportFragmentManager(), getClass().getName());
+		switch (message.getType()) {
+		case plain:
+			AlertFragment fragment = new AlertFragment();
+			fragment.setCancelable(false);
+			fragment.setArguments(bundle);
+			fragment.show(getSupportFragmentManager(), getClass().getName());
+			break;
+
+		case image:
+			ImageFragment imageFragment = new ImageFragment();
+			imageFragment.setArguments(bundle);
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, imageFragment).commitAllowingStateLoss();
+		default:
+			break;
+		}
 
 	}
 
