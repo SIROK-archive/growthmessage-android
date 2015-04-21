@@ -17,6 +17,7 @@ public class Picture extends Model {
 	private int width;
 	private int height;
 	private String name;
+	private String url;
 	private Date created;
 	private Date updated;
 
@@ -76,6 +77,14 @@ public class Picture extends Model {
 		this.name = name;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
 	public Date getCreated() {
 		return created;
 	}
@@ -108,6 +117,8 @@ public class Picture extends Model {
 			jsonObject.put("height", height);
 			if (name != null)
 				jsonObject.put("name", name);
+			if (url != null)
+				jsonObject.put("url", url);
 			if (created != null)
 				jsonObject.put("created", DateUtils.formatToDateTimeString(created));
 			if (updated != null)
@@ -139,6 +150,8 @@ public class Picture extends Model {
 				setHeight(jsonObject.getInt("height"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "name"))
 				setName(jsonObject.getString("name"));
+			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "url"))
+				setUrl(jsonObject.getString("url"));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "created"))
 				setCreated(DateUtils.parseFromDateTimeString(jsonObject.getString("created")));
 			if (JSONObjectUtils.hasAndIsNotNull(jsonObject, "updated"))
@@ -149,7 +162,7 @@ public class Picture extends Model {
 
 	}
 
-	public static enum Extension {
+	public enum Extension {
 		png, jpg
 	}
 
