@@ -3,21 +3,16 @@ package com.growthbeat.message.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.Loader;
-import android.support.v4.content.Loader.OnLoadCompleteListener;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.growthbeat.message.ImageLoader;
-import com.growthbeat.message.ImageLoader.AsyncUrlImageLoader;
 import com.growthbeat.message.model.Button;
 import com.growthbeat.message.model.CloseButton;
 import com.growthbeat.message.model.ImageButton;
@@ -26,11 +21,12 @@ import com.growthbeat.message.model.ImageMessage;
 public class ImageFragment extends Fragment {
 
 	private ImageMessage imageMessage = null;
+	private int loaderId = -1;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Object message = savedInstanceState.get("message");
+		Object message = getArguments().get("message");
 		if (message == null)
 			return;
 
@@ -43,7 +39,7 @@ public class ImageFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(android.R.id.content, null);
+		FrameLayout view = (FrameLayout) getActivity().findViewById(android.R.id.content);
 
 		double availableWidth = Math.min(this.imageMessage.getPicture().getWidth(), view.getWidth() * 0.75), availableHeight = Math.min(
 				this.imageMessage.getPicture().getHeight(), view.getHeight() * 0.75);
@@ -54,9 +50,6 @@ public class ImageFragment extends Fragment {
 
 		LinearLayout baseViewLayout = new LinearLayout(getActivity().getApplicationContext());
 		baseViewLayout.setOrientation(LinearLayout.VERTICAL);
-		LinearLayout.LayoutParams baseViewLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-				LinearLayout.LayoutParams.MATCH_PARENT);
-		baseViewLayoutParams.gravity = Gravity.CENTER;
 
 		LinearLayout.LayoutParams imageViewLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -65,59 +58,40 @@ public class ImageFragment extends Fragment {
 
 		baseViewLayout.addView(showImageWithSize(ratio), imageViewLayoutParams);
 		baseViewLayout.addView(showScreenButtonWithSize(ratio), imageViewLayoutParams);
-		for (android.widget.ImageButton imageButtonView : showImageButtonsWithSize(ratio))
+		for (ImageView imageButtonView : showImageButtonsWithSize(ratio))
 			baseViewLayout.addView(imageButtonView, imageViewLayoutParams);
-		baseViewLayout.addView(showCloseButtonWithSize(ratio), imageViewLayoutParams);
+		ImageView closeImageView = showCloseButtonWithSize(ratio);
+		if (closeImageView != null)
+			baseViewLayout.addView(closeImageView, imageViewLayoutParams);
 
-		return baseViewLayout;
+		FrameLayout.LayoutParams baseViewLayoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.MATCH_PARENT);
+		baseViewLayoutParams.gravity = Gravity.CENTER;
+		view.addView(baseViewLayout, baseViewLayoutParams);
+
+		return view;
 	}
 
 	private ImageView showImageWithSize(final double ratio) {
-		final ImageView imageView = new ImageView(getActivity().getApplicationContext());
-		AsyncUrlImageLoader asyncImageLoader = ImageLoader.getInstance().generateLoader(getActivity().getApplicationContext(),
-				this.imageMessage.getPicture().getUrl());
-		if (asyncImageLoader.needLoad()) {
-			asyncImageLoader.registerListener(1, new OnLoadCompleteListener<Bitmap>() {
-				@Override
-				public void onLoadComplete(Loader<Bitmap> loader, Bitmap bitmap) {
-					imageView.setImageBitmap(bitmap);
-				}
-			});
-			asyncImageLoader.startLoading();
-		} else {
-			imageView.setImageBitmap(asyncImageLoader.getBitmap());
-		}
-
+		ImageView imageView = new ImageView(getActivity().getApplicationContext(), this.imageMessage.getPicture().getUrl());
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 		return imageView;
 	}
 
-	private android.widget.ImageButton showScreenButtonWithSize(final double ratio) {
-		final android.widget.ImageButton imageButtonView = new android.widget.ImageButton(getActivity().getApplicationContext());
-		imageButtonView.setOnClickListener(new OnClickListener() {
+	private ImageView showScreenButtonWithSize(final double ratio) {
+		ImageView imageView = new ImageView(getActivity().getApplicationContext(), this.imageMessage.getPicture().getUrl());
+		imageView.setOnClickListener(new OnClickListener() {
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View arg0) {
 
 			}
 		});
-		AsyncUrlImageLoader asyncImageLoader = ImageLoader.getInstance().generateLoader(getActivity().getApplicationContext(),
-				this.imageMessage.getPicture().getUrl());
-		if (asyncImageLoader.needLoad()) {
-			asyncImageLoader.registerListener(1, new OnLoadCompleteListener<Bitmap>() {
-				@Override
-				public void onLoadComplete(Loader<Bitmap> loader, Bitmap bitmap) {
-					imageButtonView.setImageBitmap(bitmap);
-				}
-			});
-			asyncImageLoader.startLoading();
-		} else {
-			imageButtonView.setImageBitmap(asyncImageLoader.getBitmap());
-		}
-
-		return imageButtonView;
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
+		return imageView;
 	}
 
-	private List<android.widget.ImageButton> showImageButtonsWithSize(final double ratio) {
+	private List<ImageView> showImageButtonsWithSize(final double ratio) {
 
 		List<ImageButton> imageButtons = new ArrayList<ImageButton>();
 		for (Button button : this.imageMessage.getButtons()) {
@@ -125,41 +99,28 @@ public class ImageFragment extends Fragment {
 				imageButtons.add((ImageButton) button);
 		}
 
-		List<android.widget.ImageButton> imageButtonViews = new ArrayList<android.widget.ImageButton>();
+		List<ImageView> imageButtonViews = new ArrayList<ImageView>();
 		for (ImageButton imageButton : imageButtons) {
 
 			double width = imageButton.getPicture().getWidth() * ratio;
 			double height = imageButton.getPicture().getHeight() * ratio;
-			final android.widget.ImageButton imageButtonView = new android.widget.ImageButton(getActivity().getApplicationContext());
-			imageButtonView.setOnClickListener(new OnClickListener() {
+			ImageView imageView = new ImageView(getActivity().getApplicationContext(), imageButton.getPicture().getUrl());
+			imageView.setOnClickListener(new OnClickListener() {
 
 				@Override
-				public void onClick(View v) {
+				public void onClick(View arg0) {
 
 				}
 			});
-			AsyncUrlImageLoader asyncImageLoader = ImageLoader.getInstance().generateLoader(getActivity().getApplicationContext(),
-					imageButton.getPicture().getUrl());
-			if (asyncImageLoader.needLoad()) {
-				asyncImageLoader.registerListener(1, new OnLoadCompleteListener<Bitmap>() {
-					@Override
-					public void onLoadComplete(Loader<Bitmap> loader, Bitmap bitmap) {
-						imageButtonView.setImageBitmap(bitmap);
-					}
-				});
-				asyncImageLoader.startLoading();
-			} else {
-				imageButtonView.setImageBitmap(asyncImageLoader.getBitmap());
-			}
-
-			imageButtonViews.add(imageButtonView);
+			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
+			imageButtonViews.add(imageView);
 		}
 
 		return imageButtonViews;
 
 	}
 
-	private android.widget.ImageButton showCloseButtonWithSize(final double ratio) {
+	private ImageView showCloseButtonWithSize(final double ratio) {
 
 		CloseButton closeButton = null;
 		for (Button button : this.imageMessage.getButtons()) {
@@ -167,30 +128,20 @@ public class ImageFragment extends Fragment {
 				closeButton = (CloseButton) button;
 		}
 
-		final android.widget.ImageButton imageButtonView = new android.widget.ImageButton(getActivity().getApplicationContext());
-		imageButtonView.setOnClickListener(new OnClickListener() {
+		if (closeButton == null)
+			return null;
+
+		ImageView imageView = new ImageView(getActivity().getApplicationContext(), closeButton.getPicture().getUrl());
+		imageView.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
 
 			}
 		});
-		AsyncUrlImageLoader asyncImageLoader = ImageLoader.getInstance().generateLoader(getActivity().getApplicationContext(),
-				closeButton.getPicture().getUrl());
-		if (asyncImageLoader.needLoad()) {
-			asyncImageLoader.registerListener(1, new OnLoadCompleteListener<Bitmap>() {
-				@Override
-				public void onLoadComplete(Loader<Bitmap> loader, Bitmap bitmap) {
-					imageButtonView.setImageBitmap(bitmap);
-				}
-			});
-			asyncImageLoader.startLoading();
-		} else {
-			imageButtonView.setImageBitmap(asyncImageLoader.getBitmap());
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 
-		}
-
-		return imageButtonView;
+		return imageView;
 	}
 
 }
