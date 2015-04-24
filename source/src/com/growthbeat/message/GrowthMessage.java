@@ -97,7 +97,7 @@ public class GrowthMessage {
 						return;
 					}
 
-					logger.info(String.format("Message is received. (id: %s)", message.getId()));
+					logger.info(String.format("Message is received. (id: %s, type: %s)", message.getId(), message.getType()));
 
 					handler.post(new Runnable() {
 						@Override
