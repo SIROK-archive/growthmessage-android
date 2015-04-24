@@ -23,16 +23,18 @@ public class AlertActivity extends FragmentActivity {
 
 		switch (message.getType()) {
 		case plain:
-			AlertFragment fragment = new AlertFragment();
-			fragment.setCancelable(false);
-			fragment.setArguments(bundle);
-			fragment.show(getSupportFragmentManager(), getClass().getName());
+			AlertFragment alertFragment = new AlertFragment();
+			alertFragment.setCancelable(false);
+			alertFragment.setArguments(bundle);
+			alertFragment.show(getSupportFragmentManager(), getClass().getName());
 			break;
 
 		case image:
 			ImageFragment imageFragment = new ImageFragment();
 			imageFragment.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, imageFragment).commitAllowingStateLoss();
+			break;
+			
 		default:
 			break;
 		}
