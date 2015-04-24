@@ -14,11 +14,14 @@ public class ImageView extends android.widget.ImageView implements LoaderCallbac
 
 	public ImageView(Context context, String url) {
 		super(context);
+		this.url = url;
 	}
 
 	@Override
 	public Loader<Bitmap> onCreateLoader(int id, Bundle bundle) {
-		return new AsyncUrlImageLoader(getContext(), this.url);
+		Loader<Bitmap> loader = new AsyncUrlImageLoader(getContext(), this.url);
+		loader.forceLoad();
+		return loader;
 	}
 
 	@Override
