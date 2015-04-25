@@ -11,10 +11,12 @@ import com.growthbeat.message.AsyncUrlImageLoader;
 public class ImageView extends android.widget.ImageView implements LoaderCallbacks<Bitmap> {
 
 	private String url;
+	private double ratio;
 
-	public ImageView(Context context, String url) {
+	public ImageView(Context context, String url, double ratio) {
 		super(context);
 		this.url = url;
+		this.ratio = ratio;
 	}
 
 	@Override
@@ -26,6 +28,7 @@ public class ImageView extends android.widget.ImageView implements LoaderCallbac
 
 	@Override
 	public void onLoadFinished(Loader<Bitmap> loader, Bitmap bitmap) {
+		bitmap.setDensity((int) this.ratio);
 		setImageBitmap(bitmap);
 	}
 
