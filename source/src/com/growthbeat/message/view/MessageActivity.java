@@ -7,7 +7,7 @@ import android.view.Window;
 
 import com.growthbeat.message.model.Message;
 
-public class AlertActivity extends FragmentActivity {
+public class MessageActivity extends FragmentActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -23,18 +23,16 @@ public class AlertActivity extends FragmentActivity {
 
 		switch (message.getType()) {
 		case plain:
-			AlertFragment alertFragment = new AlertFragment();
-			alertFragment.setCancelable(false);
-			alertFragment.setArguments(bundle);
-			alertFragment.show(getSupportFragmentManager(), getClass().getName());
+			PlainMessageFragment plainMessageFragment = new PlainMessageFragment();
+			plainMessageFragment.setCancelable(false);
+			plainMessageFragment.setArguments(bundle);
+			plainMessageFragment.show(getSupportFragmentManager(), getClass().getName());
 			break;
-
 		case image:
-			ImageFragment imageFragment = new ImageFragment();
-			imageFragment.setArguments(bundle);
-			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, imageFragment).commitAllowingStateLoss();
+			ImageMessageFragment imageMessageFragment = new ImageMessageFragment();
+			imageMessageFragment.setArguments(bundle);
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, imageMessageFragment).commitAllowingStateLoss();
 			break;
-			
 		default:
 			break;
 		}

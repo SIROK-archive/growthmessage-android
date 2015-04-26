@@ -18,7 +18,7 @@ import com.growthbeat.message.model.CloseButton;
 import com.growthbeat.message.model.ImageButton;
 import com.growthbeat.message.model.ImageMessage;
 
-public class ImageFragment extends Fragment {
+public class ImageMessageFragment extends Fragment {
 
 	private ImageMessage imageMessage = null;
 	private int loaderId = -1;

@@ -12,9 +12,9 @@ import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.PlainButton;
 import com.growthbeat.message.model.PlainMessage;
 
-public class AlertFragment extends DialogFragment {
+public class PlainMessageFragment extends DialogFragment {
 
-	public AlertFragment() {
+	public PlainMessageFragment() {
 		super();
 	}
 
