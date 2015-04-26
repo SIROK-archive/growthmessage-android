@@ -88,8 +88,9 @@ public class ImageMessageFragment extends Fragment {
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getActivity().finish();
 				GrowthMessage.getInstance().selectButton(screenButton, imageMessage);
+				if (!getActivity().isFinishing())
+					getActivity().finish();
 			}
 		});
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
@@ -118,8 +119,9 @@ public class ImageMessageFragment extends Fragment {
 			urlImageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					getActivity().finish();
 					GrowthMessage.getInstance().selectButton(imageButton, imageMessage);
+					if (!getActivity().isFinishing())
+						getActivity().finish();
 				}
 			});
 			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
@@ -149,8 +151,9 @@ public class ImageMessageFragment extends Fragment {
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				getActivity().finish();
 				GrowthMessage.getInstance().selectButton(closeButton, imageMessage);
+				if (!getActivity().isFinishing())
+					getActivity().finish();
 			}
 		});
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);

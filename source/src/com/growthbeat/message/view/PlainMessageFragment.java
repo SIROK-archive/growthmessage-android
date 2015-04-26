@@ -19,6 +19,15 @@ public class PlainMessageFragment extends DialogFragment {
 	}
 
 	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		try {
+			super.onActivityCreated(savedInstanceState);
+		} catch (Exception e) {
+			getActivity().finish();
+		}
+	}
+
+	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
 
 		Object message = getArguments().get("message");
@@ -101,4 +110,5 @@ public class PlainMessageFragment extends DialogFragment {
 		return dialog;
 
 	}
+
 }
