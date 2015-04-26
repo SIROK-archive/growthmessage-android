@@ -1,5 +1,8 @@
 package com.growthbeat.message.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView.ScaleType;
 
+import com.growthbeat.message.model.Button;
+import com.growthbeat.message.model.ImageButton;
 import com.growthbeat.message.model.ImageMessage;
 
 public class ImageMessageFragment extends Fragment {
@@ -41,12 +46,13 @@ public class ImageMessageFragment extends Fragment {
 		int left = (int) ((displayMetrics.widthPixels - width) / 2);
 		int top = (int) ((displayMetrics.heightPixels - height) / 2);
 
-		FrameLayout frameLayout = new FrameLayout(getActivity());
-		frameLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
+		FrameLayout baseLayout = new FrameLayout(getActivity());
+		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
-		showImage(frameLayout, left, top, width, height, ratio);
+		showImage(baseLayout, left, top, width, height, ratio);
+		showImageButtons(baseLayout, left, top, width, height, ratio);
 
-		return frameLayout;
+		return baseLayout;
 
 	}
 
@@ -54,7 +60,7 @@ public class ImageMessageFragment extends Fragment {
 
 		FrameLayout frameLayout = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
-		layoutParams.setMargins(left, top, left, top);
+		layoutParams.setMargins(left, top, 0, 0);
 		frameLayout.setLayoutParams(layoutParams);
 		baseLayout.addView(frameLayout);
 
@@ -64,6 +70,51 @@ public class ImageMessageFragment extends Fragment {
 		frameLayout.addView(imageView);
 
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
+
+	}
+
+	private void showImageButtons(FrameLayout baseLayout, int left, int top, int width, int height, double ratio) {
+
+		List<Button> buttons = extractButtons(Button.Type.image);
+
+		int imageViewTop = top + height;
+		for (Button button : buttons) {
+
+			ImageButton imageButton = (ImageButton) button;
+
+			int imageViewWidth = (int) (imageButton.getPicture().getWidth() * ratio);
+			int imageViewHeight = (int) (imageButton.getPicture().getHeight() * ratio);
+			int imageViewLeft = left + (width - imageViewWidth) / 2;
+			imageViewTop -= imageViewHeight;
+
+			FrameLayout frameLayout = new FrameLayout(getActivity());
+			FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(imageViewWidth, imageViewHeight);
+			layoutParams.setMargins(imageViewLeft, imageViewTop, 0, 0);
+			frameLayout.setLayoutParams(layoutParams);
+			baseLayout.addView(frameLayout);
+
+			ImageView imageView = new ImageView(getActivity(), imageButton.getPicture().getUrl(), ratio);
+			imageView.setScaleType(ScaleType.FIT_CENTER);
+			imageView.setLayoutParams(new ViewGroup.LayoutParams(imageViewWidth, imageViewHeight));
+			frameLayout.addView(imageView);
+
+			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
+
+		}
+
+	}
+
+	private List<Button> extractButtons(Button.Type type) {
+
+		List<Button> buttons = new ArrayList<Button>();
+
+		for (Button button : imageMessage.getButtons()) {
+			if (button.getType() == type) {
+				buttons.add(button);
+			}
+		}
+
+		return buttons;
 
 	}
 
