@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView.ScaleType;
 
 import com.growthbeat.message.model.Button;
+import com.growthbeat.message.model.CloseButton;
 import com.growthbeat.message.model.ImageButton;
 import com.growthbeat.message.model.ImageMessage;
 
@@ -53,6 +54,7 @@ public class ImageMessageFragment extends Fragment {
 
 		showImage(baseLayout, rect, ratio);
 		showImageButtons(baseLayout, rect, ratio);
+		showCloseButton(baseLayout, rect, ratio);
 
 		return baseLayout;
 
@@ -90,6 +92,28 @@ public class ImageMessageFragment extends Fragment {
 			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 
 		}
+
+	}
+
+	private void showCloseButton(FrameLayout baseLayout, Rect rect, double ratio) {
+
+		List<Button> buttons = extractButtons(Button.Type.close);
+
+		if (buttons.size() < 1)
+			return;
+
+		CloseButton closeButton = (CloseButton) buttons.get(0);
+
+		int width = (int) (closeButton.getPicture().getWidth() * ratio);
+		int height = (int) (closeButton.getPicture().getHeight() * ratio);
+		int left = rect.getLeft() + rect.getWidth() - width / 2;
+		int top = rect.getTop() - height / 2;
+
+		ImageView imageView = new ImageView(getActivity(), closeButton.getPicture().getUrl(), ratio);
+		imageView.setScaleType(ScaleType.FIT_CENTER);
+		baseLayout.addView(wrapViewWithAbsoluteLayout(imageView, new Rect(left, top, width, height)));
+
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 
 	}
 
