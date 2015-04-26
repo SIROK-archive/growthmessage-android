@@ -46,57 +46,46 @@ public class ImageMessageFragment extends Fragment {
 		int left = (int) ((displayMetrics.widthPixels - width) / 2);
 		int top = (int) ((displayMetrics.heightPixels - height) / 2);
 
+		Rect rect = new Rect(left, top, width, height);
+
 		FrameLayout baseLayout = new FrameLayout(getActivity());
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
-		showImage(baseLayout, left, top, width, height, ratio);
-		showImageButtons(baseLayout, left, top, width, height, ratio);
+		showImage(baseLayout, rect, ratio);
+		showImageButtons(baseLayout, rect, ratio);
 
 		return baseLayout;
 
 	}
 
-	private void showImage(FrameLayout baseLayout, int left, int top, int width, int height, double ratio) {
-
-		FrameLayout frameLayout = new FrameLayout(getActivity());
-		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
-		layoutParams.setMargins(left, top, 0, 0);
-		frameLayout.setLayoutParams(layoutParams);
-		baseLayout.addView(frameLayout);
+	private void showImage(FrameLayout baseLayout, Rect rect, double ratio) {
 
 		ImageView imageView = new ImageView(getActivity(), imageMessage.getPicture().getUrl(), ratio);
 		imageView.setScaleType(ScaleType.FIT_CENTER);
-		imageView.setLayoutParams(new ViewGroup.LayoutParams(width, height));
-		frameLayout.addView(imageView);
+
+		baseLayout.addView(wrapViewWithAbsoluteLayout(imageView, rect));
 
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 
 	}
 
-	private void showImageButtons(FrameLayout baseLayout, int left, int top, int width, int height, double ratio) {
+	private void showImageButtons(FrameLayout baseLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.image);
 
-		int imageViewTop = top + height;
+		int top = rect.getTop() + rect.getHeight();
 		for (Button button : buttons) {
 
 			ImageButton imageButton = (ImageButton) button;
 
-			int imageViewWidth = (int) (imageButton.getPicture().getWidth() * ratio);
-			int imageViewHeight = (int) (imageButton.getPicture().getHeight() * ratio);
-			int imageViewLeft = left + (width - imageViewWidth) / 2;
-			imageViewTop -= imageViewHeight;
-
-			FrameLayout frameLayout = new FrameLayout(getActivity());
-			FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(imageViewWidth, imageViewHeight);
-			layoutParams.setMargins(imageViewLeft, imageViewTop, 0, 0);
-			frameLayout.setLayoutParams(layoutParams);
-			baseLayout.addView(frameLayout);
+			int width = (int) (imageButton.getPicture().getWidth() * ratio);
+			int height = (int) (imageButton.getPicture().getHeight() * ratio);
+			int left = rect.getLeft() + (rect.getWidth() - width) / 2;
+			top -= height;
 
 			ImageView imageView = new ImageView(getActivity(), imageButton.getPicture().getUrl(), ratio);
 			imageView.setScaleType(ScaleType.FIT_CENTER);
-			imageView.setLayoutParams(new ViewGroup.LayoutParams(imageViewWidth, imageViewHeight));
-			frameLayout.addView(imageView);
+			baseLayout.addView(wrapViewWithAbsoluteLayout(imageView, new Rect(left, top, width, height)));
 
 			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, imageView);
 
@@ -115,6 +104,73 @@ public class ImageMessageFragment extends Fragment {
 		}
 
 		return buttons;
+
+	}
+
+	private View wrapViewWithAbsoluteLayout(View view, Rect rect) {
+
+		FrameLayout frameLayout = new FrameLayout(getActivity());
+		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(rect.getWidth(), rect.getHeight());
+		layoutParams.setMargins(rect.getLeft(), rect.getTop(), 0, 0);
+		frameLayout.setLayoutParams(layoutParams);
+
+		view.setLayoutParams(new ViewGroup.LayoutParams(rect.getWidth(), rect.getHeight()));
+		frameLayout.addView(view);
+
+		return frameLayout;
+
+	}
+
+	private class Rect {
+
+		private int left;
+		private int top;
+		private int width;
+		private int height;
+
+		public Rect() {
+			super();
+		}
+
+		public Rect(int left, int top, int width, int height) {
+			this();
+			setLeft(left);
+			setTop(top);
+			setWidth(width);
+			setHeight(height);
+		}
+
+		public int getLeft() {
+			return left;
+		}
+
+		public void setLeft(int left) {
+			this.left = left;
+		}
+
+		public int getTop() {
+			return top;
+		}
+
+		public void setTop(int top) {
+			this.top = top;
+		}
+
+		public int getWidth() {
+			return width;
+		}
+
+		public void setWidth(int width) {
+			this.width = width;
+		}
+
+		public int getHeight() {
+			return height;
+		}
+
+		public void setHeight(int height) {
+			this.height = height;
+		}
 
 	}
 
