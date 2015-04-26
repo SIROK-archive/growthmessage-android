@@ -26,14 +26,14 @@
 
 	```xml
 	<activity
-	    android:name="com.growthbeat.message.view.AlertActivity"
-        android:theme="@android:style/Theme.Translucent" />
-    ````
+	    android:name="com.growthbeat.message.view.MessageActivity"
+	    android:theme="@android:style/Theme.Translucent" />
+	````
 
-1. (Optional) Track event to receive a message such as following code.
+1. Write following code in the place to display a message.
 
 	```java
-	GrowthAnalytics.getInstance().open();
+	GrowthAnalytics.getInstance().track("EVENT_ID");
 	```
 
 ## Growthbeat Full SDK
