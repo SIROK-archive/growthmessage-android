@@ -16,6 +16,7 @@ import com.growthbeat.Preference;
 import com.growthbeat.analytics.EventHandler;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
+import com.growthbeat.message.handler.ImageMassageHandler;
 import com.growthbeat.message.handler.MessageHandler;
 import com.growthbeat.message.handler.PlainMassageHandler;
 import com.growthbeat.message.model.Button;
@@ -75,7 +76,7 @@ public class GrowthMessage {
 			}
 		});
 
-		setMessageHandlers(Arrays.asList(new PlainMassageHandler(context)));
+		setMessageHandlers(Arrays.asList(new PlainMassageHandler(context), new ImageMassageHandler(context)));
 
 	}
 
