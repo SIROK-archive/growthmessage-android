@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
 
-import com.growthbeat.message.AsyncUrlImageLoader;
-
 public class UrlImageView extends android.widget.ImageView implements LoaderCallbacks<Bitmap> {
 
 	private String url;

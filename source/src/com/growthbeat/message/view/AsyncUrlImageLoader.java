@@ -1,4 +1,4 @@
-package com.growthbeat.message;
+package com.growthbeat.message.view;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -28,9 +28,9 @@ public class AsyncUrlImageLoader extends AsyncTaskLoader<Bitmap> {
 			connection.connect();
 			return BitmapFactory.decodeStream(connection.getInputStream());
 		} catch (IOException e) {
+			return null;
 		}
 
-		return null;
 	}
 
 	@Override
@@ -39,9 +39,8 @@ public class AsyncUrlImageLoader extends AsyncTaskLoader<Bitmap> {
 			return;
 		if (bitmap.isRecycled())
 			return;
-		bitmap.isRecycled();
+		bitmap.recycle();
 		bitmap = null;
-
 	}
 
 }
