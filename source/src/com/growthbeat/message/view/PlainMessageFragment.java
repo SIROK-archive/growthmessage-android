@@ -34,9 +34,34 @@ public class PlainMessageFragment extends DialogFragment {
 		dialogBuilder.setTitle(plainMessage.getCaption());
 		dialogBuilder.setMessage(plainMessage.getText());
 
-		if (plainMessage.getButtons() != null && plainMessage.getButtons().size() >= 2) {
+		if (plainMessage.getButtons() == null)
+			return null;
 
-			final PlainButton positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+		final PlainButton positiveButton;
+		final PlainButton neutralButton;
+		final PlainButton negativeButton;
+
+		switch (plainMessage.getButtons().size()) {
+		case 1:
+			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+			neutralButton = null;
+			negativeButton = null;
+			break;
+		case 2:
+			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+			neutralButton = null;
+			negativeButton = (PlainButton) plainMessage.getButtons().get(1);
+			break;
+		case 3:
+			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
+			neutralButton = (PlainButton) plainMessage.getButtons().get(1);
+			negativeButton = (PlainButton) plainMessage.getButtons().get(2);
+			break;
+		default:
+			return null;
+		}
+
+		if (positiveButton != null) {
 			dialogBuilder.setPositiveButton(positiveButton.getLabel(), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -45,8 +70,20 @@ public class PlainMessageFragment extends DialogFragment {
 						getActivity().finish();
 				}
 			});
+		}
 
-			final PlainButton negativeButton = (PlainButton) plainMessage.getButtons().get(1);
+		if (neutralButton != null) {
+			dialogBuilder.setNeutralButton(neutralButton.getLabel(), new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					GrowthMessage.getInstance().selectButton(neutralButton, plainMessage);
+					if (!getActivity().isFinishing())
+						getActivity().finish();
+				}
+			});
+		}
+
+		if (negativeButton != null) {
 			dialogBuilder.setNegativeButton(negativeButton.getLabel(), new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -55,7 +92,6 @@ public class PlainMessageFragment extends DialogFragment {
 						getActivity().finish();
 				}
 			});
-
 		}
 
 		AlertDialog dialog = dialogBuilder.create();
