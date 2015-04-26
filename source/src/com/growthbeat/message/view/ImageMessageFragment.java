@@ -1,6 +1,7 @@
 package com.growthbeat.message.view;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.graphics.Color;
@@ -18,6 +19,7 @@ import com.growthbeat.message.model.Button;
 import com.growthbeat.message.model.CloseButton;
 import com.growthbeat.message.model.ImageButton;
 import com.growthbeat.message.model.ImageMessage;
+import com.growthbeat.message.model.ScreenButton;
 
 public class ImageMessageFragment extends Fragment {
 
@@ -54,6 +56,7 @@ public class ImageMessageFragment extends Fragment {
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
 		showImage(baseLayout, rect, ratio);
+		showScreenButton(baseLayout, rect, ratio);
 		showImageButtons(baseLayout, rect, ratio);
 		showCloseButton(baseLayout, rect, ratio);
 
@@ -65,16 +68,40 @@ public class ImageMessageFragment extends Fragment {
 
 		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl());
 		urlImageView.setScaleType(ScaleType.FIT_CENTER);
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageView);
 
 		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageView, rect));
 
-		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageView);
+	}
+
+	private void showScreenButton(FrameLayout baseLayout, Rect rect, double ratio) {
+
+		List<Button> buttons = extractButtons(Button.Type.screen);
+
+		if (buttons.size() < 1)
+			return;
+
+		final ScreenButton screenButton = (ScreenButton) buttons.get(0);
+
+		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl());
+		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
+		urlImageButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				getActivity().finish();
+				GrowthMessage.getInstance().selectButton(screenButton, imageMessage);
+			}
+		});
+		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
+
+		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, rect));
 
 	}
 
 	private void showImageButtons(FrameLayout baseLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.image);
+		Collections.reverse(buttons);
 
 		int top = rect.getTop() + rect.getHeight();
 		for (Button button : buttons) {
@@ -95,8 +122,8 @@ public class ImageMessageFragment extends Fragment {
 					GrowthMessage.getInstance().selectButton(imageButton, imageMessage);
 				}
 			});
-
 			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
+
 			baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
 
 		}
