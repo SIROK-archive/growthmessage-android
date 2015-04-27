@@ -181,6 +181,7 @@ public class ImageMessageFragment extends Fragment {
 		FrameLayout frameLayout = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(rect.getWidth(), rect.getHeight());
 		layoutParams.setMargins(rect.getLeft(), rect.getTop(), 0, 0);
+		layoutParams.gravity = android.view.Gravity.FILL;
 		frameLayout.setLayoutParams(layoutParams);
 
 		view.setLayoutParams(new ViewGroup.LayoutParams(rect.getWidth(), rect.getHeight()));
