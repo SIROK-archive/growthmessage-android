@@ -23,6 +23,7 @@ import com.growthbeat.message.model.ScreenButton;
 
 public class ImageMessageFragment extends Fragment {
 
+	private FrameLayout baseLayout = null;
 	private ImageMessage imageMessage = null;
 	private int loaderId = -1;
 
@@ -52,7 +53,8 @@ public class ImageMessageFragment extends Fragment {
 
 		Rect rect = new Rect(left, top, width, height);
 
-		FrameLayout baseLayout = new FrameLayout(getActivity());
+		baseLayout = new FrameLayout(getActivity());
+		baseLayout.setVisibility(View.GONE);
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
 		showImage(baseLayout, rect, ratio);
@@ -62,6 +64,12 @@ public class ImageMessageFragment extends Fragment {
 
 		return baseLayout;
 
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+	    super.onActivityCreated(savedInstanceState);
+	    baseLayout.setVisibility(View.INVISIBLE);
 	}
 
 	private void showImage(FrameLayout baseLayout, Rect rect, double ratio) {
