@@ -8,11 +8,13 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView.ScaleType;
+import android.widget.ProgressBar;
 
 import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.Button;
@@ -24,65 +26,86 @@ import com.growthbeat.message.model.ScreenButton;
 public class ImageMessageFragment extends Fragment {
 
 	private FrameLayout baseLayout = null;
+	private FrameLayout innerLayout = null;
 	private ImageMessage imageMessage = null;
+	
+	private ProgressBar circle = null;
 	private int loaderId = -1;
+	private int imageCount = 0;
+	
+	private Runnable run = new Runnable() {
+		@Override
+		public void run() {
+			imageCount--;
+			if (imageCount < 0) {
+				innerLayout.setVisibility(View.VISIBLE);
+				circle.setVisibility(View.GONE);
+			}
+		}
+	};
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
 
 		Object message = getArguments().get("message");
-		if (message == null)
-			return null;
-		if (!(message instanceof ImageMessage))
+		if (message == null || !(message instanceof ImageMessage))
 			return null;
 
 		this.imageMessage = (ImageMessage) message;
+		this.imageCount = imageMessage.getButtons().size();
 
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
-		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayMetrics.density, displayMetrics.widthPixels * 0.75);
-		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density,
-				displayMetrics.heightPixels * 0.75);
-		double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight
-				/ imageMessage.getPicture().getHeight());
+		double displayDensity = displayMetrics.density, displayWidth = displayMetrics.widthPixels, displayHeight = displayMetrics.heightPixels;
+		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayDensity, displayWidth * 0.75);
+		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayDensity, displayHeight * 0.75);
+		double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight / imageMessage.getPicture().getHeight());
 
 		int width = (int) (imageMessage.getPicture().getWidth() * ratio);
 		int height = (int) (imageMessage.getPicture().getHeight() * ratio);
-		int left = (int) ((displayMetrics.widthPixels - width) / 2);
-		int top = (int) ((displayMetrics.heightPixels - height) / 2);
+		int left = (int) ((displayWidth - width) / 2);
+		int top = (int) ((displayHeight - height) / 2);
 
 		Rect rect = new Rect(left, top, width, height);
 
 		baseLayout = new FrameLayout(getActivity());
-		baseLayout.setVisibility(View.GONE);
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
+		
+		innerLayout = new FrameLayout(getActivity());
+		innerLayout.setVisibility(View.GONE);
 
-		showImage(baseLayout, rect, ratio);
-		showScreenButton(baseLayout, rect, ratio);
-		showImageButtons(baseLayout, rect, ratio);
-		showCloseButton(baseLayout, rect, ratio);
+		showLoadDialog(baseLayout, ratio);
+		showImage(innerLayout, rect);
+		showScreenButton(innerLayout, rect);
+		showImageButtons(innerLayout, rect, ratio);
+		showCloseButton(innerLayout, rect, ratio);
+		
+		baseLayout.addView(innerLayout);
 
 		return baseLayout;
 
 	}
 	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-	    super.onActivityCreated(savedInstanceState);
-	    baseLayout.setVisibility(View.INVISIBLE);
+	private void showLoadDialog(FrameLayout baseLayout, double ratio) {
+        circle = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) (100 * ratio), (int) (100 * ratio));
+        layoutParams.gravity = Gravity.CENTER;
+        
+        baseLayout.addView(circle, layoutParams);
 	}
 
-	private void showImage(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showImage(FrameLayout innerLayout, Rect rect) {
 
-		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl());
+		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl(), run);
 		urlImageView.setScaleType(ScaleType.FIT_CENTER);
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageView);
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageView, rect));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(urlImageView, rect));
 
 	}
 
-	private void showScreenButton(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showScreenButton(FrameLayout innerLayout, Rect rect) {
 
 		List<Button> buttons = extractButtons(Button.Type.screen);
 
@@ -91,7 +114,7 @@ public class ImageMessageFragment extends Fragment {
 
 		final ScreenButton screenButton = (ScreenButton) buttons.get(0);
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl());
+		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl(), run);
 		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -103,11 +126,11 @@ public class ImageMessageFragment extends Fragment {
 		});
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, rect));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, rect));
 
 	}
 
-	private void showImageButtons(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showImageButtons(FrameLayout innerLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.image);
 		Collections.reverse(buttons);
@@ -122,7 +145,7 @@ public class ImageMessageFragment extends Fragment {
 			int left = rect.getLeft() + (rect.getWidth() - width) / 2;
 			top -= height;
 
-			UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageButton.getPicture().getUrl());
+			UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageButton.getPicture().getUrl(), run);
 			urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 			urlImageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -134,13 +157,13 @@ public class ImageMessageFragment extends Fragment {
 			});
 			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
 
-			baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
+			innerLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
 
 		}
 
 	}
 
-	private void showCloseButton(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showCloseButton(FrameLayout innerLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.close);
 
@@ -154,7 +177,7 @@ public class ImageMessageFragment extends Fragment {
 		int left = rect.getLeft() + rect.getWidth() - width / 2;
 		int top = rect.getTop() - height / 2;
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), closeButton.getPicture().getUrl());
+		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), closeButton.getPicture().getUrl(), run);
 		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -166,7 +189,7 @@ public class ImageMessageFragment extends Fragment {
 		});
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
 
 	}
 
