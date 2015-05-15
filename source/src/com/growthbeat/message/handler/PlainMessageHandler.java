@@ -7,11 +7,11 @@ import com.growthbeat.message.model.Message;
 import com.growthbeat.message.model.PlainMessage;
 import com.growthbeat.message.view.MessageActivity;
 
-public class PlainMassageHandler implements MessageHandler {
+public class PlainMessageHandler implements MessageHandler {
 
 	private Context context;
 
-	public PlainMassageHandler(Context context) {
+	public PlainMessageHandler(Context context) {
 		this.context = context;
 	}
 

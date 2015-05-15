@@ -7,11 +7,11 @@ import com.growthbeat.message.model.ImageMessage;
 import com.growthbeat.message.model.Message;
 import com.growthbeat.message.view.MessageActivity;
 
-public class ImageMassageHandler implements MessageHandler {
+public class ImageMessageHandler implements MessageHandler {
 
 	private Context context;
 
-	public ImageMassageHandler(Context context) {
+	public ImageMessageHandler(Context context) {
 		this.context = context;
 	}
 
