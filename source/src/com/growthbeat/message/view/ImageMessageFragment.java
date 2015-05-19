@@ -39,9 +39,8 @@ public class ImageMessageFragment extends Fragment {
 
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
-		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayMetrics.density, displayMetrics.widthPixels * 0.75);
-		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density,
-				displayMetrics.heightPixels * 0.75);
+		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayMetrics.density, displayMetrics.widthPixels * 0.85);
+		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density, displayMetrics.heightPixels * 0.85);
 		double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight
 				/ imageMessage.getPicture().getHeight());
 
