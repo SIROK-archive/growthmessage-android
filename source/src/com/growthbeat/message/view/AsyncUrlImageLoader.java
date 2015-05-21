@@ -28,8 +28,8 @@ public class AsyncUrlImageLoader extends AsyncTaskLoader<Bitmap> {
 		if (url != null) {
 			HttpClient client = new DefaultHttpClient();
 			
-			HttpConnectionParams.setConnectionTimeout(client.getParams(), 10);
-			HttpConnectionParams.setSoTimeout(client.getParams(), 10);
+			HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+			HttpConnectionParams.setSoTimeout(client.getParams(), 10000);
 			
 			HttpGet method = new HttpGet(url);
 			HttpResponse response = null;
