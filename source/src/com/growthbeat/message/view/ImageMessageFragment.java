@@ -33,7 +33,7 @@ public class ImageMessageFragment extends Fragment {
 	private int loaderId = -1;
 	private int imageCount = 0;
 	
-	private Runnable run = new Runnable() {
+	private Runnable successRun = new Runnable() {
 		@Override
 		public void run() {
 			imageCount--;
@@ -41,6 +41,13 @@ public class ImageMessageFragment extends Fragment {
 				innerLayout.setVisibility(View.VISIBLE);
 				circle.setVisibility(View.GONE);
 			}
+		}
+	};
+	
+	private Runnable failureRun = new Runnable() {
+		@Override
+		public void run() {
+			getActivity().finish();
 		}
 	};
 
@@ -97,7 +104,7 @@ public class ImageMessageFragment extends Fragment {
 
 	private void showImage(FrameLayout innerLayout, Rect rect) {
 
-		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl(), run);
+		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl(), successRun, failureRun);
 		urlImageView.setScaleType(ScaleType.FIT_CENTER);
 		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageView);
 
@@ -114,7 +121,7 @@ public class ImageMessageFragment extends Fragment {
 
 		final ScreenButton screenButton = (ScreenButton) buttons.get(0);
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl(), run);
+		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl(), successRun, failureRun);
 		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -145,7 +152,7 @@ public class ImageMessageFragment extends Fragment {
 			int left = rect.getLeft() + (rect.getWidth() - width) / 2;
 			top -= height;
 
-			UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageButton.getPicture().getUrl(), run);
+			UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageButton.getPicture().getUrl(), successRun, failureRun);
 			urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 			urlImageButton.setOnClickListener(new View.OnClickListener() {
 				@Override
@@ -177,7 +184,7 @@ public class ImageMessageFragment extends Fragment {
 		int left = rect.getLeft() + rect.getWidth() - width / 2;
 		int top = rect.getTop() - height / 2;
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), closeButton.getPicture().getUrl(), run);
+		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), closeButton.getPicture().getUrl(), successRun, failureRun);
 		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
 		urlImageButton.setOnClickListener(new View.OnClickListener() {
 			@Override

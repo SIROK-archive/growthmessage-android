@@ -9,12 +9,14 @@ import android.support.v4.content.Loader;
 public class UrlImageView extends android.widget.ImageView implements LoaderCallbacks<Bitmap> {
 
 	private String url;
-	private Runnable callback;
+	private Runnable successRun;
+	private Runnable failureRun;
 
-	public UrlImageView(Context context, String url, Runnable callback) {
+	public UrlImageView(Context context, String url, Runnable successRun, Runnable failureRun) {
 		super(context);
 		this.url = url;
-		this.callback = callback;
+		this.successRun = successRun;
+		this.failureRun = failureRun;
 	}
 
 	@Override
@@ -26,7 +28,10 @@ public class UrlImageView extends android.widget.ImageView implements LoaderCall
 
 	@Override
 	public void onLoadFinished(Loader<Bitmap> loader, Bitmap bitmap) {
-		callback.run();
+		if(bitmap == null)
+			failureRun.run();
+		else
+			successRun.run();
 		setImageBitmap(bitmap);
 	}
 
