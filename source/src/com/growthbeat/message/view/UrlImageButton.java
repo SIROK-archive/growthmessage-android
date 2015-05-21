@@ -9,8 +9,8 @@ import android.widget.ImageView;
 
 public class UrlImageButton extends UrlImageView {
 
-	public UrlImageButton(Context context, String url, Runnable run) {
-		super(context, url, run);
+	public UrlImageButton(Context context, String url, Runnable successRun, Runnable failureRun) {
+		super(context, url, successRun, failureRun);
 		setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
