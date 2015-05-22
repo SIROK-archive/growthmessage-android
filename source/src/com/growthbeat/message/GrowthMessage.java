@@ -1,5 +1,6 @@
 package com.growthbeat.message;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,9 +17,9 @@ import com.growthbeat.Preference;
 import com.growthbeat.analytics.EventHandler;
 import com.growthbeat.analytics.GrowthAnalytics;
 import com.growthbeat.http.GrowthbeatHttpClient;
-import com.growthbeat.message.handler.ImageMassageHandler;
+import com.growthbeat.message.handler.ImageMessageHandler;
 import com.growthbeat.message.handler.MessageHandler;
-import com.growthbeat.message.handler.PlainMassageHandler;
+import com.growthbeat.message.handler.PlainMessageHandler;
 import com.growthbeat.message.model.Button;
 import com.growthbeat.message.model.Message;
 
@@ -38,7 +39,7 @@ public class GrowthMessage {
 	private String credentialId = null;
 
 	private boolean initialized = false;
-	private List<? extends MessageHandler> messageHandlers;
+	private List<MessageHandler> messageHandlers = new ArrayList<MessageHandler>();
 
 	private GrowthMessage() {
 		super();
@@ -76,7 +77,7 @@ public class GrowthMessage {
 			}
 		});
 
-		setMessageHandlers(Arrays.asList(new PlainMassageHandler(context), new ImageMassageHandler(context)));
+		setMessageHandlers(Arrays.asList(new PlainMessageHandler(context), new ImageMessageHandler(context)));
 
 	}
 
@@ -171,8 +172,12 @@ public class GrowthMessage {
 		return preference;
 	}
 
-	public void setMessageHandlers(List<? extends MessageHandler> messageHandlers) {
+	public void setMessageHandlers(List<MessageHandler> messageHandlers) {
 		this.messageHandlers = messageHandlers;
+	}
+
+	public void addMessageHandler(MessageHandler messageHandler) {
+		this.messageHandlers.add(messageHandler);
 	}
 
 	private static class Thread extends CatchableThread {
