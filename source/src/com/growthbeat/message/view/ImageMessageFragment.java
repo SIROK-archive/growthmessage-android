@@ -66,7 +66,7 @@ public class ImageMessageFragment extends Fragment {
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
 		progressBar = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
-		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams((int) (100 * ratio), (int) (100 * ratio));
+		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(0, 0);
 		layoutParams.gravity = Gravity.CENTER;
 		baseLayout.addView(progressBar, layoutParams);
 

@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -136,6 +135,8 @@ public class MessageImageDownloader implements LoaderCallbacks<Bitmap> {
 
 	private static class ImageLoader extends AsyncTaskLoader<Bitmap> {
 
+		private static final int IMAGE_DOWNLOAD_TIMEOUT = 10 * 1000;
+
 		private String urlString;
 
 		public ImageLoader(Context context, String urlString) {
@@ -146,27 +147,21 @@ public class MessageImageDownloader implements LoaderCallbacks<Bitmap> {
 		@Override
 		public Bitmap loadInBackground() {
 
-			if (urlString != null) {
-				HttpClient client = new DefaultHttpClient();
+			if (urlString == null)
+				return null;
 
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-				HttpConnectionParams.setSoTimeout(client.getParams(), 10000);
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpConnectionParams.setConnectionTimeout(httpClient.getParams(), IMAGE_DOWNLOAD_TIMEOUT);
+			HttpConnectionParams.setSoTimeout(httpClient.getParams(), IMAGE_DOWNLOAD_TIMEOUT);
 
-				HttpGet method = new HttpGet(urlString);
-				HttpResponse response = null;
-				try {
-					response = client.execute(method);
-					if (response.getStatusLine().getStatusCode() == 200) {
-						HttpEntity entity = response.getEntity();
-						if (entity != null) {
-							return BitmapFactory.decodeStream(entity.getContent());
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+			try {
+				HttpResponse httpResponse = httpClient.execute(new HttpGet(urlString));
+				if (httpResponse.getStatusLine().getStatusCode() < 200 && httpResponse.getStatusLine().getStatusCode() >= 300)
+					return null;
+				return BitmapFactory.decodeStream(httpResponse.getEntity().getContent());
+			} catch (Exception e) {
+				return null;
 			}
-			return null;
 
 		}
 
