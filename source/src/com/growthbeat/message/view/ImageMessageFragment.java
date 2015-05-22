@@ -47,17 +47,17 @@ public class ImageMessageFragment extends Fragment {
 
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
-		double displayDensity = displayMetrics.density, displayWidth = displayMetrics.widthPixels, displayHeight = displayMetrics.heightPixels;
-		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayDensity, displayWidth * 0.75);
-		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayDensity, displayHeight * 0.75);
+		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayMetrics.density, displayMetrics.widthPixels * 0.85);
+		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density,
+				displayMetrics.heightPixels * 0.85);
 
 		final double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight
 				/ imageMessage.getPicture().getHeight());
 
 		int width = (int) (imageMessage.getPicture().getWidth() * ratio);
 		int height = (int) (imageMessage.getPicture().getHeight() * ratio);
-		int left = (int) ((displayWidth - width) / 2);
-		int top = (int) ((displayHeight - height) / 2);
+		int left = (int) ((displayMetrics.widthPixels - width) / 2);
+		int top = (int) ((displayMetrics.heightPixels - height) / 2);
 
 		final Rect rect = new Rect(left, top, width, height);
 
