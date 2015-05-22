@@ -30,7 +30,6 @@ import com.growthbeat.message.model.ScreenButton;
 public class ImageMessageFragment extends Fragment {
 
 	private FrameLayout baseLayout = null;
-	private FrameLayout innerLayout = null;
 	private ImageMessage imageMessage = null;
 
 	private ProgressBar progressBar = null;
@@ -66,23 +65,19 @@ public class ImageMessageFragment extends Fragment {
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
 		progressBar = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
-		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(0, 0);
+		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(100, 100);
 		layoutParams.gravity = Gravity.CENTER;
 		baseLayout.addView(progressBar, layoutParams);
-
-		innerLayout = new FrameLayout(getActivity());
-		innerLayout.setVisibility(View.GONE);
 
 		MessageImageDownloader.Callback callback = new MessageImageDownloader.Callback() {
 			@Override
 			public void success(Map<String, Bitmap> images) {
 				cachedImages = images;
-				showImage(innerLayout, rect);
-				showScreenButton(innerLayout, rect);
-				showImageButtons(innerLayout, rect, ratio);
-				showCloseButton(innerLayout, rect, ratio);
-				innerLayout.setVisibility(View.VISIBLE);
 				progressBar.setVisibility(View.GONE);
+				showImage(baseLayout, rect);
+				showScreenButton(baseLayout, rect);
+				showImageButtons(baseLayout, rect, ratio);
+				showCloseButton(baseLayout, rect, ratio);
 			}
 
 			@Override
@@ -94,8 +89,6 @@ public class ImageMessageFragment extends Fragment {
 		MessageImageDownloader messageImageDonwloader = new MessageImageDownloader(getActivity().getSupportLoaderManager(), getActivity(),
 				imageMessage, callback);
 		messageImageDonwloader.download();
-
-		baseLayout.addView(innerLayout);
 
 		return baseLayout;
 
