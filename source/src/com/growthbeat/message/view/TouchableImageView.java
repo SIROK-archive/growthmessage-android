@@ -7,10 +7,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-public class UrlImageButton extends UrlImageView {
+public class TouchableImageView extends ImageView {
 
-	public UrlImageButton(Context context, String url) {
-		super(context, url);
+	public TouchableImageView(Context context) {
+		super(context);
 		setOnTouchListener(new View.OnTouchListener() {
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {

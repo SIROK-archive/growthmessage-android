@@ -2,17 +2,23 @@ package com.growthbeat.message.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
+import android.widget.ProgressBar;
 
 import com.growthbeat.message.GrowthMessage;
 import com.growthbeat.message.model.Button;
@@ -23,16 +29,18 @@ import com.growthbeat.message.model.ScreenButton;
 
 public class ImageMessageFragment extends Fragment {
 
+	private FrameLayout baseLayout = null;
 	private ImageMessage imageMessage = null;
-	private int loaderId = -1;
+
+	private ProgressBar progressBar = null;
+
+	Map<String, Bitmap> cachedImages = new HashMap<String, Bitmap>();
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		Object message = getArguments().get("message");
-		if (message == null)
-			return null;
-		if (!(message instanceof ImageMessage))
+		if (message == null || !(message instanceof ImageMessage))
 			return null;
 
 		this.imageMessage = (ImageMessage) message;
@@ -40,8 +48,10 @@ public class ImageMessageFragment extends Fragment {
 		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
 
 		double availableWidth = Math.min(imageMessage.getPicture().getWidth() * displayMetrics.density, displayMetrics.widthPixels * 0.85);
-		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density, displayMetrics.heightPixels * 0.85);
-		double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight
+		double availableHeight = Math.min(imageMessage.getPicture().getHeight() * displayMetrics.density,
+				displayMetrics.heightPixels * 0.85);
+
+		final double ratio = Math.min(availableWidth / imageMessage.getPicture().getWidth(), availableHeight
 				/ imageMessage.getPicture().getHeight());
 
 		int width = (int) (imageMessage.getPicture().getWidth() * ratio);
@@ -49,31 +59,52 @@ public class ImageMessageFragment extends Fragment {
 		int left = (int) ((displayMetrics.widthPixels - width) / 2);
 		int top = (int) ((displayMetrics.heightPixels - height) / 2);
 
-		Rect rect = new Rect(left, top, width, height);
+		final Rect rect = new Rect(left, top, width, height);
 
-		FrameLayout baseLayout = new FrameLayout(getActivity());
+		baseLayout = new FrameLayout(getActivity());
 		baseLayout.setBackgroundColor(Color.argb(128, 0, 0, 0));
 
-		showImage(baseLayout, rect, ratio);
-		showScreenButton(baseLayout, rect, ratio);
-		showImageButtons(baseLayout, rect, ratio);
-		showCloseButton(baseLayout, rect, ratio);
+		progressBar = new ProgressBar(getActivity(), null, android.R.attr.progressBarStyleLarge);
+		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(100, 100);
+		layoutParams.gravity = Gravity.CENTER;
+		baseLayout.addView(progressBar, layoutParams);
+
+		MessageImageDownloader.Callback callback = new MessageImageDownloader.Callback() {
+			@Override
+			public void success(Map<String, Bitmap> images) {
+				cachedImages = images;
+				progressBar.setVisibility(View.GONE);
+				showImage(baseLayout, rect);
+				showScreenButton(baseLayout, rect);
+				showImageButtons(baseLayout, rect, ratio);
+				showCloseButton(baseLayout, rect, ratio);
+			}
+
+			@Override
+			public void failure() {
+				if (!getActivity().isFinishing())
+					getActivity().finish();
+			}
+		};
+		MessageImageDownloader messageImageDonwloader = new MessageImageDownloader(getActivity().getSupportLoaderManager(), getActivity(),
+				imageMessage, callback);
+		messageImageDonwloader.download();
 
 		return baseLayout;
 
 	}
 
-	private void showImage(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showImage(FrameLayout innerLayout, Rect rect) {
 
-		UrlImageView urlImageView = new UrlImageView(getActivity(), imageMessage.getPicture().getUrl());
-		urlImageView.setScaleType(ScaleType.FIT_CENTER);
-		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageView);
+		ImageView imageView = new ImageView(getActivity());
+		imageView.setScaleType(ScaleType.FIT_CENTER);
+		imageView.setImageBitmap(cachedImages.get(imageMessage.getPicture().getUrl()));
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageView, rect));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(imageView, rect));
 
 	}
 
-	private void showScreenButton(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showScreenButton(FrameLayout innerLayout, Rect rect) {
 
 		List<Button> buttons = extractButtons(Button.Type.screen);
 
@@ -82,9 +113,9 @@ public class ImageMessageFragment extends Fragment {
 
 		final ScreenButton screenButton = (ScreenButton) buttons.get(0);
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageMessage.getPicture().getUrl());
-		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
-		urlImageButton.setOnClickListener(new View.OnClickListener() {
+		TouchableImageView touchableImageView = new TouchableImageView(getActivity());
+		touchableImageView.setScaleType(ScaleType.FIT_CENTER);
+		touchableImageView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				GrowthMessage.getInstance().selectButton(screenButton, imageMessage);
@@ -92,13 +123,13 @@ public class ImageMessageFragment extends Fragment {
 					getActivity().finish();
 			}
 		});
-		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
+		touchableImageView.setImageBitmap(cachedImages.get(imageMessage.getPicture().getUrl()));
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, rect));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(touchableImageView, rect));
 
 	}
 
-	private void showImageButtons(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showImageButtons(FrameLayout innerLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.image);
 		Collections.reverse(buttons);
@@ -113,9 +144,9 @@ public class ImageMessageFragment extends Fragment {
 			int left = rect.getLeft() + (rect.getWidth() - width) / 2;
 			top -= height;
 
-			UrlImageButton urlImageButton = new UrlImageButton(getActivity(), imageButton.getPicture().getUrl());
-			urlImageButton.setScaleType(ScaleType.FIT_CENTER);
-			urlImageButton.setOnClickListener(new View.OnClickListener() {
+			TouchableImageView touchableImageView = new TouchableImageView(getActivity());
+			touchableImageView.setScaleType(ScaleType.FIT_CENTER);
+			touchableImageView.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					GrowthMessage.getInstance().selectButton(imageButton, imageMessage);
@@ -123,15 +154,15 @@ public class ImageMessageFragment extends Fragment {
 						getActivity().finish();
 				}
 			});
-			getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
+			touchableImageView.setImageBitmap(cachedImages.get(imageButton.getPicture().getUrl()));
 
-			baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
+			innerLayout.addView(wrapViewWithAbsoluteLayout(touchableImageView, new Rect(left, top, width, height)));
 
 		}
 
 	}
 
-	private void showCloseButton(FrameLayout baseLayout, Rect rect, double ratio) {
+	private void showCloseButton(FrameLayout innerLayout, Rect rect, double ratio) {
 
 		List<Button> buttons = extractButtons(Button.Type.close);
 
@@ -145,9 +176,9 @@ public class ImageMessageFragment extends Fragment {
 		int left = rect.getLeft() + rect.getWidth() - width / 2;
 		int top = rect.getTop() - height / 2;
 
-		UrlImageButton urlImageButton = new UrlImageButton(getActivity(), closeButton.getPicture().getUrl());
-		urlImageButton.setScaleType(ScaleType.FIT_CENTER);
-		urlImageButton.setOnClickListener(new View.OnClickListener() {
+		TouchableImageView touchableImageView = new TouchableImageView(getActivity());
+		touchableImageView.setScaleType(ScaleType.FIT_CENTER);
+		touchableImageView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				GrowthMessage.getInstance().selectButton(closeButton, imageMessage);
@@ -155,9 +186,9 @@ public class ImageMessageFragment extends Fragment {
 					getActivity().finish();
 			}
 		});
-		getActivity().getSupportLoaderManager().initLoader(loaderId++, null, urlImageButton);
+		touchableImageView.setImageBitmap(cachedImages.get(closeButton.getPicture().getUrl()));
 
-		baseLayout.addView(wrapViewWithAbsoluteLayout(urlImageButton, new Rect(left, top, width, height)));
+		innerLayout.addView(wrapViewWithAbsoluteLayout(touchableImageView, new Rect(left, top, width, height)));
 
 	}
 
@@ -180,6 +211,7 @@ public class ImageMessageFragment extends Fragment {
 		FrameLayout frameLayout = new FrameLayout(getActivity());
 		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(rect.getWidth(), rect.getHeight());
 		layoutParams.setMargins(rect.getLeft(), rect.getTop(), 0, 0);
+		layoutParams.gravity = android.view.Gravity.FILL;
 		frameLayout.setLayoutParams(layoutParams);
 
 		view.setLayoutParams(new ViewGroup.LayoutParams(rect.getWidth(), rect.getHeight()));
