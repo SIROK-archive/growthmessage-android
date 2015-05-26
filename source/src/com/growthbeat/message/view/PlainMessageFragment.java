@@ -47,24 +47,16 @@ public class PlainMessageFragment extends DialogFragment {
 			return null;
 
 		final PlainButton positiveButton;
-		final PlainButton neutralButton;
 		final PlainButton negativeButton;
 
 		switch (plainMessage.getButtons().size()) {
 		case 1:
 			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
-			neutralButton = null;
 			negativeButton = null;
 			break;
 		case 2:
 			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
-			neutralButton = null;
 			negativeButton = (PlainButton) plainMessage.getButtons().get(1);
-			break;
-		case 3:
-			positiveButton = (PlainButton) plainMessage.getButtons().get(0);
-			neutralButton = (PlainButton) plainMessage.getButtons().get(1);
-			negativeButton = (PlainButton) plainMessage.getButtons().get(2);
 			break;
 		default:
 			return null;
@@ -75,17 +67,6 @@ public class PlainMessageFragment extends DialogFragment {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					GrowthMessage.getInstance().selectButton(positiveButton, plainMessage);
-					if (!getActivity().isFinishing())
-						getActivity().finish();
-				}
-			});
-		}
-
-		if (neutralButton != null) {
-			dialogBuilder.setNeutralButton(neutralButton.getLabel(), new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					GrowthMessage.getInstance().selectButton(neutralButton, plainMessage);
 					if (!getActivity().isFinishing())
 						getActivity().finish();
 				}
