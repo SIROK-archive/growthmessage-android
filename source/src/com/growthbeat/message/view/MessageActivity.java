@@ -23,10 +23,16 @@ public class MessageActivity extends FragmentActivity {
 
 		switch (message.getType()) {
 		case plain:
-			PlainMessageFragment plainMessageFragment = new PlainMessageFragment();
-			plainMessageFragment.setCancelable(false);
-			plainMessageFragment.setArguments(bundle);
-			plainMessageFragment.show(getSupportFragmentManager(), getClass().getName());
+			if(message.getButtons().size() >= 3) {
+				CustomPlainMessageFragment customPlainMessageFragment = new CustomPlainMessageFragment();
+				customPlainMessageFragment.setArguments(bundle);
+				getSupportFragmentManager().beginTransaction().replace(android.R.id.content, customPlainMessageFragment).commitAllowingStateLoss();
+			} else {
+				PlainMessageFragment plainMessageFragment = new PlainMessageFragment();
+				plainMessageFragment.setCancelable(false);
+				plainMessageFragment.setArguments(bundle);
+				plainMessageFragment.show(getSupportFragmentManager(), getClass().getName());
+			}
 			break;
 		case image:
 			ImageMessageFragment imageMessageFragment = new ImageMessageFragment();
