@@ -33,6 +33,11 @@ public class MessageActivity extends FragmentActivity {
 			imageMessageFragment.setArguments(bundle);
 			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, imageMessageFragment).commitAllowingStateLoss();
 			break;
+		case banner:
+			BannerMessageFragment bannerMessageFragment = new BannerMessageFragment();
+			bannerMessageFragment.setArguments(bundle);
+			getSupportFragmentManager().beginTransaction().replace(android.R.id.content, bannerMessageFragment).commitAllowingStateLoss();
+			break;
 		default:
 			break;
 		}
