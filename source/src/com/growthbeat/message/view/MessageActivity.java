@@ -25,8 +25,9 @@ public class MessageActivity extends FragmentActivity {
 		case plain:
 			if(message.getButtons().size() >= 3) {
 				CustomPlainMessageFragment customPlainMessageFragment = new CustomPlainMessageFragment();
+				customPlainMessageFragment.setCancelable(false);
 				customPlainMessageFragment.setArguments(bundle);
-				getSupportFragmentManager().beginTransaction().replace(android.R.id.content, customPlainMessageFragment).commitAllowingStateLoss();
+				customPlainMessageFragment.show(getSupportFragmentManager(), getClass().getName());
 			} else {
 				PlainMessageFragment plainMessageFragment = new PlainMessageFragment();
 				plainMessageFragment.setCancelable(false);
