@@ -1,5 +1,7 @@
 # Growth Message SDK for Android
 
+:rotating_light: **This SDK is no longer maintained** :rotating_light:
+
 [Growth Message](https://message.growthbeat.com/) is in-app message service for mobile apps.
 
 ## Usage 
